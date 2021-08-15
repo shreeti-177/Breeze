@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+        <!--Features-->
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <GridLayout
+                android:id="@+id/featureGrid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:rowCount="2"
+                android:columnCount="2">
+
+                <!--Row 1-->
+
+                <!--Column 1-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/myBudget"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <!-- Media -->
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="194dp"
+                            app:srcCompat="@drawable/feature_my_budget"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="@string/feature1"
+                            />
+
+                        <!-- Title, secondary and supporting text -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/feature1"
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!--Column 2-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/myCategories"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <!-- Media -->
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="194dp"
+                            app:srcCompat="@drawable/feature_my_categories"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="@string/feature2"
+                            />
+
+                        <!-- Title, secondary and supporting text -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/feature2"
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!--Row 2-->
+
+                <!--Column 1-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/myHabits"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <!-- Media -->
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="194dp"
+                            app:srcCompat="@drawable/feature_my_habits"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="@string/feature3"
+                            />
+
+                        <!-- Title, secondary and supporting text -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/feature3"
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!--Column 2-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/myPlans"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <!-- Media -->
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="194dp"
+                            app:srcCompat="@drawable/feature_my_plans"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="@string/feature4"
+                            />
+
+                        <!-- Title, secondary and supporting text -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/feature4"
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </GridLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addCashTransactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/feature5"
+            app:srcCompat="@drawable/feature_add_transactions"
+            android:tint="@color/white"
+            />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

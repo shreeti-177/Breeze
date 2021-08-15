@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "205491039665",
+    "project_id": "personal-bc235",
+    "storage_bucket": "personal-bc235.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205491039665:android:ac3e4ce76f0d6a61c16190",
+        "android_client_info": {
+          "package_name": "com.example.personalfinance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205491039665-o57roroublndrhnhnft0t5mtjeo712ej.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDV982aphUN_6M8HM05cDeMbUkpJ5BhEFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205491039665-o57roroublndrhnhnft0t5mtjeo712ej.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
