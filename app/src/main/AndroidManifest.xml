@@ -21,8 +21,9 @@
         <activity android:name=".OnboardActivity" />
         <activity android:name=".HomePageActivity" />
         <activity android:name=".BudgetActivity" />
-<!--        <activity android:name=".CategoryActivity" />-->
-<!--        <activity android:name=".AddCashTransactionActivity" />-->
+        <activity android:name=".CashTransactionActivity" />
+        <activity android:name=".ExpenseActivity" />
+
 
     </application>
 

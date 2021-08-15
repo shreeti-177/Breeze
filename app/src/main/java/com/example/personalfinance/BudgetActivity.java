@@ -275,8 +275,8 @@ public class BudgetActivity extends AppCompatActivity {
     private View a_View;
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    String currentMonth = Util.getMonth().toString();
-    private DatabaseReference m_BudgetRef = FirebaseDatabase.getInstance().getReference().child("budget").child(a_Uid).child(currentMonth);
+    Months currentMonth = Util.getMonth();
+    private DatabaseReference m_BudgetRef = FirebaseDatabase.getInstance().getReference().child("budget").child(a_Uid).child(String.valueOf(currentMonth));
     private RecyclerView m_RecyclerView;
     private BudgetAdapter m_Adapter;
     private final static String TAG = "BudgetActivity";

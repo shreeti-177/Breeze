@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,14 +26,17 @@ import com.plaid.client.model.TransactionsGetResponse;
 import com.plaid.client.request.PlaidApi;
 
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
+import org.joda.time.Years;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -79,7 +83,14 @@ public class HomePageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
 
         CardView m_MyBudget = findViewById(R.id.myBudget);
+        FloatingActionButton m_AddCashTransactions = findViewById(R.id.addCashTransactions);
+
+        m_AddCashTransactions.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), CashTransactionActivity.class)));
         m_MyBudget.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), BudgetActivity.class)));
+
+        CardView m_MyCategories = findViewById(R.id.myCategories);
+        m_MyCategories.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ExpenseActivity.class)));
+
 
     }
 
@@ -127,6 +138,9 @@ public class HomePageActivity extends AppCompatActivity {
         SimpleDateFormat m_CurrentFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date a_ObjectDate = m_CurrentFormat.parse(a_DateText);
 
+//        Log.i("Date Object",String.valueOf(a_ObjectDate));
+
+
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(a_ObjectDate);
 
@@ -136,10 +150,13 @@ public class HomePageActivity extends AppCompatActivity {
         MutableDateTime a_Epoch = new MutableDateTime();
         a_Epoch.setDate(0);
         MutableDateTime a_TransactionTime = new MutableDateTime();
-        a_TransactionTime.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-//        Log.i("DDate transaction time", String.valueOf(a_TransactionTime));
-        Months a_Month = Months.monthsBetween(a_Epoch,a_TransactionTime);
-//        Log.i("DDate get month", String.valueOf(a_Month.getMonths()));
+        a_TransactionTime.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH));
+        Log.i("DDate transaction time", String.valueOf(a_TransactionTime));
+
+        DateTime a_now=new DateTime(a_TransactionTime);
+
+        Months a_Month = Months.monthsBetween(a_Epoch,a_now);
+        Log.i("DDate get month", String.valueOf(a_Month.getMonths()));
 
         Data a_Expense = new Data(a_ExpenseId, a_CategoryName, a_Merchant, a_Amount, a_Date, a_Month.getMonths(), a_Note);
 
@@ -201,8 +218,8 @@ public class HomePageActivity extends AppCompatActivity {
     ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    String currentMonth = Util.getMonth().toString();
-    private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(currentMonth);
+    Months currentMonth = Util.getMonth();
+    private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
     private List<Transaction> m_Transactions;
     private String TAG="HomePageActivity";
 
