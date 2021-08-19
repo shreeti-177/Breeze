@@ -2,13 +2,19 @@ package com.example.personalfinance;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PersistableBundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -37,11 +43,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ExpenseActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
+
         m_PieChart=findViewById(R.id.pieChart);
+        m_RecyclerView = findViewById(R.id.recyclerView);
+
+        LinearLayoutManager m_LinearLayoutManager = new LinearLayoutManager(this);
+        m_RecyclerView.setLayoutManager(m_LinearLayoutManager);
+        m_RecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        m_Adapter = new ExpenseAdapter();
+        m_RecyclerView.setAdapter(m_Adapter);
+
         m_ExpenseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -49,14 +66,23 @@ public class ExpenseActivity extends AppCompatActivity {
                     Data data = dataSnapshot.getValue(Data.class);
                     monthlyDataList.add(data);
                 }
-                Double totalAmount = 0.0;
-                for (Data m:monthlyDataList) {
-                    totalAmount+=m.getAmount();
+                Double totalExpenses = 0.0;
+                for (Data d:monthlyDataList) {
+                    if(d.getAmount()>=0) {
+                        totalExpenses += d.getAmount();
+                    }
                 }
-                Log.i("Total Month Spending", String.valueOf(totalAmount));
+                Log.i("Total Month Spending", String.valueOf(totalExpenses));
+
+
+
                 SetUpPieChart();
                 LoadPieChart();
+                m_Adapter.SetExpenses(monthlyDataList);
+                m_Adapter.notifyDataSetChanged();
+
             }
+
 
             @Override
             public void onCancelled(@NonNull @NotNull DatabaseError error) {}
@@ -64,37 +90,21 @@ public class ExpenseActivity extends AppCompatActivity {
     }
 
     private void LoadPieChart(){
-        Log.i("Here", "Reaches Here:Load Pie Chart Data");
         ArrayList<PieEntry> entries = new ArrayList<>();
-        HashMap<String, Double> spendingCategories = new HashMap<>();
-        for (Data d: monthlyDataList){
-            String a_category = Objects.requireNonNull(d.getCategory());
-            if(!spendingCategories.containsKey(a_category)){
-                spendingCategories.put(a_category, d.getAmount());
-                continue;
-            }
-            Double newValue = spendingCategories.get(a_category) + d.getAmount();
-            spendingCategories.put(a_category, newValue);
-        }
+        spendingCategories=Util.GetCategoricalExpense(monthlyDataList);
+
 
         for (String name: spendingCategories.keySet()){
             entries.add(new PieEntry(Objects.requireNonNull(spendingCategories.get(name)).floatValue(), name));
-            Log.i("Category Keys", name);
-            Log.i("Category Values", spendingCategories.get(name).toString());
+//            Log.i("Category Keys", name);
+//            Log.i("Category Values", spendingCategories.get(name).toString());
         }
 
-        ArrayList<Integer> colors = new ArrayList<>();
-        for (int color: ColorTemplate.MATERIAL_COLORS) {
-            colors.add(color);
-        }
-
-        for (int color: ColorTemplate.VORDIPLOM_COLORS) {
-            colors.add(color);
-        }
 
         PieDataSet dataSet = new PieDataSet(entries, "Expense Category");
-        dataSet.setColors(colors);
+        dataSet.setColors(ColorTemplate.PASTEL_COLORS);
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        dataSet.removeLast();
 
         PieData data = new PieData(dataSet);
         data.setDrawValues(true);
@@ -103,14 +113,16 @@ public class ExpenseActivity extends AppCompatActivity {
         data.setValueTextColor(Color.BLACK);
 
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setValueLinePart1OffsetPercentage(80.f);
-        dataSet.setValueLinePart1Length(0.2f);
-        dataSet.setValueLinePart2Length(0.4f);
+        dataSet.setValueLinePart1Length(0.5f);
+        dataSet.setValueLinePart2Length(0.05f);
 
         m_PieChart.setData(data);
-
+//        m_PieChart.setScaleX(0.8f);
+//        m_PieChart.setScaleY(0.8f);
         m_PieChart.invalidate();
-//        m_PieChart.animateY(1400, Easing.EaseInOutQuad);
+        m_PieChart.animateY(1400, Easing.EaseInOutQuad);
 
 
     }
@@ -122,27 +134,34 @@ public class ExpenseActivity extends AppCompatActivity {
         m_PieChart.setEntryLabelTextSize(12);
         m_PieChart.setEntryLabelColor(Color.BLACK);
         m_PieChart.setCenterText("Spending by Category");
-        m_PieChart.setCenterTextSize(24);
+        m_PieChart.setCenterTextSize(18);
         m_PieChart.getDescription().setEnabled(false);
         m_PieChart.setDrawEntryLabels(false);
 
+
         Legend legend = m_PieChart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setDrawInside(true);
         legend.setEnabled(true);
         Log.i("Pie Chart","Pie Chart Set Up Successful");
     }
 
+
     ExecutorService m_Executor = Executors.newSingleThreadExecutor();
+    private final Handler m_Handler = new Handler(Looper.getMainLooper());
+
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth();
+    Months currentMonth = Util.getMonth().minus(1);
     private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
     private PieChart m_PieChart;
     private Map<String, Double> m_Categories;
+    private RecyclerView m_RecyclerView;
+    ExpenseAdapter m_Adapter;
     private List<Data> monthlyDataList=new ArrayList<>();
+    private Map<String, Double> spendingCategories=new HashMap<>();
     private static final String TAG = "ExpenseActivity";
 
 }

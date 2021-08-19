@@ -151,12 +151,12 @@ public class HomePageActivity extends AppCompatActivity {
         a_Epoch.setDate(0);
         MutableDateTime a_TransactionTime = new MutableDateTime();
         a_TransactionTime.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH));
-        Log.i("DDate transaction time", String.valueOf(a_TransactionTime));
+//        Log.i("DDate transaction time", String.valueOf(a_TransactionTime));
 
         DateTime a_now=new DateTime(a_TransactionTime);
 
         Months a_Month = Months.monthsBetween(a_Epoch,a_now);
-        Log.i("DDate get month", String.valueOf(a_Month.getMonths()));
+//        Log.i("DDate get month", String.valueOf(a_Month.getMonths()));
 
         Data a_Expense = new Data(a_ExpenseId, a_CategoryName, a_Merchant, a_Amount, a_Date, a_Month.getMonths(), a_Note);
 
@@ -165,11 +165,10 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     private void FetchTransactions(String a_AccessToken){
-        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
+        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
 //        LocalDate startDate = LocalDate.now().minusDays(30);
-        LocalDate endDate=LocalDate.now();
+        LocalDate endDate=LocalDate.now().minusMonths(1).withDayOfMonth(31);
 
-        Log.i("Here", "Reaches beginning");
         TransactionsGetRequest request = new TransactionsGetRequest()
                 .accessToken(a_AccessToken)
                 .startDate(startDate)
@@ -198,27 +197,20 @@ public class HomePageActivity extends AppCompatActivity {
             }
         }
 
-        Log.i("Here", "Response ready");
         m_Transactions = new ArrayList<>();
         assert apiResponse.body() != null;
         Log.i("Total Number of Transactions",String.valueOf(apiResponse.body().getTotalTransactions()));
         m_Transactions.addAll(apiResponse.body().getTransactions());
-        Log.i("Here","This executes before");
 
         Log.i("All transactions",String.valueOf(m_Transactions));
-//        for (Transaction t: m_Transactions){
-//                Log.i("Spending Amount",String.valueOf(t.getAmount()));
-//            m_TotalOnlineSpending+=t.getAmount();
-//        }
-
-        Log.i("Here", "Returning from the function");
+//        Log.i("Here", "Returning from the function");
     }
 
 
     ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth();
+    Months currentMonth = Util.getMonth().minus(1);
     private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
     private List<Transaction> m_Transactions;
     private String TAG="HomePageActivity";

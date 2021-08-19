@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/category_expense_layout">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:cardElevation="20dp"
+        android:elevation="10dp"
+        android:layout_margin="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+<!--            Image view-->
+<!--            <TextView-->
+<!--                android:id="@+id/categoryIcon"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Image"-->
+<!--                style="@style/PlaidText.H2.SemiBold"-->
+<!--                android:layout_alignParentLeft="true"/>-->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_centerHorizontal="true">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/categoryName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Category"
+                        style="@style/PlaidText.H2.SemiBold"/>
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/gaugeLine"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_toRightOf="@id/categoryName"-->
+<!--                        android:text="Gauge"-->
+<!--                        style="@style/PlaidText.H2.SemiBold"/>-->
+                </RelativeLayout>
+
+<!--                <TextView-->
+<!--                    android:id="@+id/transactions"-->
+<!--                    style="@style/PlaidText.H2.SemiBold"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_toRightOf="@+id/categoryIcon"-->
+<!--                    android:layout_below="@+id/categoryName"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:text="Transactions" />-->
+            </LinearLayout>
+
+
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_centerInParent="true"/>-->
+
+            <TextView
+                android:id="@+id/categoryBudget"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                style="@style/PlaidText.H2.SemiBold"
+                android:layout_alignParentRight="true"
+                android:text="Budget" />
+
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

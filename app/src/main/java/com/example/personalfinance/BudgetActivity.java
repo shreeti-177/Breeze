@@ -238,7 +238,7 @@ public class BudgetActivity extends AppCompatActivity {
         MutableDateTime a_Epoch = new MutableDateTime();
         a_Epoch.setDate(0);
         DateTime a_Now = new DateTime();
-        Months a_Month = Months.monthsBetween(a_Epoch, a_Now);
+        Months a_Month = Months.monthsBetween(a_Epoch, a_Now).minus(1);
 
         String a_Category = m_CategoryField.getText().toString();
 
@@ -275,7 +275,7 @@ public class BudgetActivity extends AppCompatActivity {
     private View a_View;
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth();
+    Months currentMonth = Util.getMonth().minus(1);
     private DatabaseReference m_BudgetRef = FirebaseDatabase.getInstance().getReference().child("budget").child(a_Uid).child(String.valueOf(currentMonth));
     private RecyclerView m_RecyclerView;
     private BudgetAdapter m_Adapter;

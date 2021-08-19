@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Objects;
 
 public class Util {
     public static Months getMonth() {
@@ -55,5 +57,25 @@ public class Util {
         return basicCategories;
     }
 
-
+    public static Map<String, Double> GetCategoricalExpense(List<Data> monthlyDataList) {
+        Map<String, Double> categoryExpense = new HashMap<>();
+        for (Data d : monthlyDataList) {
+            if (d.getAmount() < 0) {
+                continue;
+            }
+            String a_category = Objects.requireNonNull(d.getCategory());
+            if (!categoryExpense.containsKey(a_category)) {
+                categoryExpense.put(a_category, d.getAmount());
+                continue;
+            }
+            Double newValue = categoryExpense.get(a_category) + d.getAmount();
+            categoryExpense.put(a_category, newValue);
+        }
+        for (String category: GetExistingCategories()){
+            if (!categoryExpense.containsKey(category)){
+                categoryExpense.put(category,0.0);
+            }
+        }
+        return categoryExpense;
+    }
 }

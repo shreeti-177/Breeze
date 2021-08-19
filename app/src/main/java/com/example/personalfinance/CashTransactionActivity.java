@@ -151,7 +151,7 @@ public class CashTransactionActivity extends AppCompatActivity {
     private MaterialDatePicker m_DatePicker;
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth();
+    Months currentMonth = Util.getMonth().minus(1);
     private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
     private final String TAG = "AddTransactionActivity";
 
