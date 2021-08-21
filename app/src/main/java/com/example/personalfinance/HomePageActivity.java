@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.plaid.client.request.PlaidApi;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 import org.joda.time.Years;
@@ -37,6 +39,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,9 +54,15 @@ import java.util.concurrent.Executors;
 import retrofit2.Response;
 
 public class HomePageActivity extends AppCompatActivity {
+    DateTime dt = DateTime.now();
+    String month = dt.toString("MMM-YYYY");
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         m_Executor.execute(()->{
             DatabaseReference m_BaseDataRef = FirebaseDatabase.getInstance().getReference().child("base-data").child(a_Uid);
             m_BaseDataRef.child("accessToken").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -80,6 +89,19 @@ public class HomePageActivity extends AppCompatActivity {
             });
 
         });
+
+        m_Executor.execute(()->{
+            DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(a_Uid).child(String.valueOf(currentMonth));
+            m_SummaryRef.child("month").setValue(month).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "SetMonthlySummary: success");
+                    Toast.makeText(getApplicationContext(), "Monthly budget summary set successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.w(TAG, "SetMonthlySummary: failure", task.getException());
+                    Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
         setContentView(R.layout.activity_home_page);
 
         CardView m_MyBudget = findViewById(R.id.myBudget);
@@ -91,22 +113,25 @@ public class HomePageActivity extends AppCompatActivity {
         CardView m_MyCategories = findViewById(R.id.myCategories);
         m_MyCategories.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ExpenseActivity.class)));
 
+        CardView m_MyHabits = findViewById(R.id.myHabits);
+        m_MyHabits.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), HabitsActivity.class)));
+
+        CardView m_MyPlans = findViewById(R.id.myPlans);
+        m_MyPlans.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), PlansActivity.class)));
+
 
     }
 
     private void AddTransactionsToDatabase() throws ParseException {
         for(Transaction t: m_Transactions) {
             Data a_Expense = CreateExpenseObject(t);
-            m_ExpenseRef.child(a_Expense.getId()).setValue(a_Expense).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull @NotNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "AddTransaction: success");
-                        Toast.makeText(getApplicationContext(), "Transaction added successfully", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.w(TAG, "AddTransaction: failure", task.getException());
-                        Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+            m_ExpenseRef.child(a_Expense.getId()).setValue(a_Expense).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "AddTransaction: success");
+                    Toast.makeText(getApplicationContext(), "Transaction added successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.w(TAG, "AddTransaction: failure", task.getException());
+                    Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -156,18 +181,20 @@ public class HomePageActivity extends AppCompatActivity {
         DateTime a_now=new DateTime(a_TransactionTime);
 
         Months a_Month = Months.monthsBetween(a_Epoch,a_now);
+        Days a_Day = Days.daysBetween(a_Epoch,a_now);
 //        Log.i("DDate get month", String.valueOf(a_Month.getMonths()));
 
-        Data a_Expense = new Data(a_ExpenseId, a_CategoryName, a_Merchant, a_Amount, a_Date, a_Month.getMonths(), a_Note);
+        Data a_Expense = new Data(a_ExpenseId, a_CategoryName, a_Merchant, a_Amount, a_Date, a_Month.getMonths(), a_Day.getDays(), a_Note);
 
         return a_Expense;
 
     }
 
     private void FetchTransactions(String a_AccessToken){
-        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-//        LocalDate startDate = LocalDate.now().minusDays(30);
-        LocalDate endDate=LocalDate.now().minusMonths(1).withDayOfMonth(31);
+        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
+//        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+//        LocalDate endDate = LocalDate.now().minusMonths(1).withDayOfMonth(31);
+        LocalDate endDate=LocalDate.now();
 
         TransactionsGetRequest request = new TransactionsGetRequest()
                 .accessToken(a_AccessToken)
@@ -210,7 +237,7 @@ public class HomePageActivity extends AppCompatActivity {
     ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth().minus(1);
+    Months currentMonth = Util.getMonth();
     private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
     private List<Transaction> m_Transactions;
     private String TAG="HomePageActivity";

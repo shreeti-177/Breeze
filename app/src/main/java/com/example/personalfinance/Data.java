@@ -8,27 +8,34 @@ public class Data {
 
 
     private int month;
+    private int day;
     private String merchant;
     private String notes;
 
     public Data(){}
 
-    public Data(String a_Id, String a_Category, Double a_Amount, String a_Date, int a_Month){
+    public Data(String a_Id, String a_Category, Double a_Amount, String a_Date, int a_Month, int a_Day){
         this.id = a_Id;
         this.category=a_Category;
         this.amount=a_Amount;
         this.date=a_Date;
         this.month=a_Month;
+        this.day=a_Day;
     }
 
-    public Data(String a_Id, String a_Category, String a_Merchant, Double a_Amount, String a_Date, int a_Month, String a_Notes){
+    public Data(String a_Id, String a_Category, String a_Merchant, Double a_Amount, String a_Date, int a_Month, int a_Day, String a_Notes){
         this.id = a_Id;
         this.category=a_Category;
         this.amount=a_Amount;
         this.date=a_Date;
         this.month=a_Month;
+        this.day=a_Day;
         this.notes=a_Notes;
     }
+
+    public int getDay() { return day; }
+
+    public void setDay(int day) { this.day = day; }
 
     public String getCategory() {
         return category;

@@ -64,7 +64,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     public ExpenseAdapter() {
         FirebaseAuth m_Auth = FirebaseAuth.getInstance();
         String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-        Months currentMonth = Util.getMonth().minus(2);
+        Months currentMonth = Util.getMonth();
         DatabaseReference m_BudgetRef = FirebaseDatabase.getInstance().getReference().child("budget").child(a_Uid).child(String.valueOf(currentMonth));
 
 
@@ -86,7 +86,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     @NotNull
     @Override
     public ExpenseViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        Log.i("Here","Reaches here");
+//        Log.i("Here","Reaches here");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_category, parent, false);
         ExpenseViewHolder myViewHolder = new ExpenseViewHolder(view);
         return myViewHolder;

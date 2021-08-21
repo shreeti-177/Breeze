@@ -45,6 +45,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 
@@ -147,15 +148,33 @@ public class BudgetActivity extends AppCompatActivity {
                         m_TotalBudget.setText("Total Budget: " + String.valueOf(a_Total));
                     }
                 }
+                StoreMonthlyBudget(a_Total);
             }
 
             @Override
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
             }
+
         });
 
     }
 
+    private void StoreMonthlyBudget(Double a_Budget){
+            DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(a_Uid).child(String.valueOf(currentMonth));
+            m_SummaryRef.child("monthly-budget").setValue(a_Budget).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull @NotNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "SetMonthlyBudgetSummary: success");
+                        Toast.makeText(getApplicationContext(), "Monthly budget summary set successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.w(TAG, "SetMonthlyBudgetSummary: failure", task.getException());
+                        Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            });
+    }
     private void OpenCategoryDialog(Button Category) {
 
         MaterialAlertDialogBuilder addDialog = new MaterialAlertDialogBuilder(this);
@@ -238,11 +257,12 @@ public class BudgetActivity extends AppCompatActivity {
         MutableDateTime a_Epoch = new MutableDateTime();
         a_Epoch.setDate(0);
         DateTime a_Now = new DateTime();
-        Months a_Month = Months.monthsBetween(a_Epoch, a_Now).minus(1);
+        Months a_Month = Months.monthsBetween(a_Epoch, a_Now);
+        Days a_Day = Days.daysBetween(a_Epoch,a_Now);
 
         String a_Category = m_CategoryField.getText().toString();
 
-        Data a_Budget = new Data(a_BudgetId, a_Category, Double.parseDouble(a_Amount), a_Date, a_Month.getMonths());
+        Data a_Budget = new Data(a_BudgetId, a_Category, Double.parseDouble(a_Amount), a_Date, a_Month.getMonths(), a_Day.getDays());
 
         return a_Budget;
     }
@@ -275,7 +295,7 @@ public class BudgetActivity extends AppCompatActivity {
     private View a_View;
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth().minus(1);
+    Months currentMonth = Util.getMonth();
     private DatabaseReference m_BudgetRef = FirebaseDatabase.getInstance().getReference().child("budget").child(a_Uid).child(String.valueOf(currentMonth));
     private RecyclerView m_RecyclerView;
     private BudgetAdapter m_Adapter;

@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:cardElevation="20dp"
-        android:elevation="10dp"
-        android:layout_margin="5dp"
-        tools:ignore="MissingConstraints">
-        <TextView
-            android:id="@+id/categoryName"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Category Name"/>
-    </androidx.cardview.widget.CardView>
+            android:layout_height="match_parent"/>
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        app:cardElevation="20dp"-->
+<!--        android:elevation="10dp"-->
+<!--        android:layout_margin="5dp"-->
+<!--        tools:ignore="MissingConstraints">-->
+<!--        <TextView-->
+<!--            android:id="@+id/budgetReport"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center"-->
+<!--            android:text="Budget Report"/>-->
+<!--    </androidx.cardview.widget.CardView>-->
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="vertical">-->
+<!--        <com.github.mikephil.charting.charts.BarChart-->
+<!--            android:id="@+id/barChartTotal"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="2"/>-->
+
+<!--    </LinearLayout>-->
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</LinearLayout>

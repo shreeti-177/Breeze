@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +24,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -66,16 +69,18 @@ public class ExpenseActivity extends AppCompatActivity {
                     Data data = dataSnapshot.getValue(Data.class);
                     monthlyDataList.add(data);
                 }
-                Double totalExpenses = 0.0;
+
                 for (Data d:monthlyDataList) {
                     if(d.getAmount()>=0) {
-                        totalExpenses += d.getAmount();
+                        totalMonthlyExpense += d.getAmount();
                     }
                 }
-                Log.i("Total Month Spending", String.valueOf(totalExpenses));
+                Log.i("Total Month Spending", String.valueOf(totalMonthlyExpense));
 
 
-
+                m_Executor.execute(()->{
+                    StoreMonthlyExpense(totalMonthlyExpense);
+                });
                 SetUpPieChart();
                 LoadPieChart();
                 m_Adapter.SetExpenses(monthlyDataList);
@@ -89,6 +94,22 @@ public class ExpenseActivity extends AppCompatActivity {
         });
     }
 
+    private void StoreMonthlyExpense(Double a_Expense){
+        DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(a_Uid).child(String.valueOf(currentMonth));
+        m_SummaryRef.child("monthly-expense").setValue(a_Expense).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "SetMonthlyExpenseSummary: success");
+                    Toast.makeText(getApplicationContext(), "Monthly expense summary set successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.w(TAG, "SetMonthlyExpenseSummary: failure", task.getException());
+                    Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
+    }
     private void LoadPieChart(){
         ArrayList<PieEntry> entries = new ArrayList<>();
         spendingCategories=Util.GetCategoricalExpense(monthlyDataList);
@@ -154,14 +175,15 @@ public class ExpenseActivity extends AppCompatActivity {
 
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth().minus(1);
+    Months currentMonth = Util.getMonth();
     private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
     private PieChart m_PieChart;
     private Map<String, Double> m_Categories;
     private RecyclerView m_RecyclerView;
-    ExpenseAdapter m_Adapter;
+    private ExpenseAdapter m_Adapter;
     private List<Data> monthlyDataList=new ArrayList<>();
     private Map<String, Double> spendingCategories=new HashMap<>();
     private static final String TAG = "ExpenseActivity";
+    private Double totalMonthlyExpense = 0.0;
 
 }

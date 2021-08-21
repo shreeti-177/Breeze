@@ -39,4 +39,6 @@
     <string name="update">Update</string>
     <string name="delete">Delete</string>
 
+    <string name="new_goal">Add a New Goal</string>
+
 </resources>

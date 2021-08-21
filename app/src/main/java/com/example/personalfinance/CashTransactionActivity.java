@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 
@@ -129,8 +130,9 @@ public class CashTransactionActivity extends AppCompatActivity {
         a_Epoch.setDate(0);
         DateTime a_Now = new DateTime();
         Months a_Month = Months.monthsBetween(a_Epoch,a_Now);
+        Days a_Day = Days.daysBetween(a_Epoch,a_Now);
 
-        Data a_Expense = new Data(a_ExpenseId, a_CategoryName, a_Merchant, Double.parseDouble(a_Amount), a_Date, a_Month.getMonths(), a_Note);
+        Data a_Expense = new Data(a_ExpenseId, a_CategoryName, a_Merchant, Double.parseDouble(a_Amount), a_Date, a_Month.getMonths(), a_Day.getDays(), a_Note);
 
         return a_Expense;
     }
@@ -151,7 +153,7 @@ public class CashTransactionActivity extends AppCompatActivity {
     private MaterialDatePicker m_DatePicker;
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth().minus(1);
+    Months currentMonth = Util.getMonth();
     private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
     private final String TAG = "AddTransactionActivity";
 

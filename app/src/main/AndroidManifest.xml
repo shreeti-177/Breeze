@@ -23,6 +23,8 @@
         <activity android:name=".BudgetActivity" />
         <activity android:name=".CashTransactionActivity" />
         <activity android:name=".ExpenseActivity" />
+        <activity android:name=".HabitsActivity" />
+        <activity android:name=".PlansActivity" />
 
 
     </application>
