@@ -20,6 +20,19 @@
         <!--        </androidx.appcompat.widget.Toolbar>-->
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            app:boxBackgroundColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter New Goal...">
+
+        <AutoCompleteTextView
+            android:id="@+id/goalName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/goalCategoryBox"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             app:boxBackgroundColor="@color/white"

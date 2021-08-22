@@ -25,6 +25,7 @@
         <activity android:name=".ExpenseActivity" />
         <activity android:name=".HabitsActivity" />
         <activity android:name=".PlansActivity" />
+        <activity android:name=".NewGoalActivity" />
 
 
     </application>

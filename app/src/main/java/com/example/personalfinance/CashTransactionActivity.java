@@ -99,18 +99,10 @@ public class CashTransactionActivity extends AppCompatActivity {
 
     private Data AddNewTransaction() throws ParseException {
         String a_CategoryName = m_CategoryField.getText().toString().trim();
-        if (a_CategoryName.isEmpty()){
-            Log.e(TAG,"Empty Category Field");
-            m_CategoryField.setError("Required Field");
-            m_CategoryField.requestFocus();
-        }
+        Util.CheckForNullEntry(a_CategoryName,m_CategoryField);
 
         String a_Amount = m_AmountField.getText().toString().trim();
-        if (a_Amount.isEmpty()){
-            Log.e(TAG,"Empty Amount Field");
-            m_AmountField.setError("Required Field");
-            m_AmountField.requestFocus();
-        }
+        Util.CheckForNullEntry(a_Amount,m_AmountField);
 
         String a_Merchant = m_MerchantField.getText().toString().trim();
         String a_Note = m_NoteField.getText().toString().trim();

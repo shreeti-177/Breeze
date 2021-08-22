@@ -6,11 +6,14 @@ public class Data {
     private Double amount;
     private String date;
 
-
     private int month;
     private int day;
     private String merchant;
     private String notes;
+
+    private String goal;
+    private String goalCategory;
+    private Double goalBudget;
 
     public Data(){}
 
@@ -32,6 +35,18 @@ public class Data {
         this.day=a_Day;
         this.notes=a_Notes;
     }
+
+    public Data(String a_Id, String a_GoalName,Double a_GoalBudget, String a_Date, int a_Month, int a_Day, String a_Notes){
+        this.id=a_Id;
+        this.goal=a_GoalName;
+        this.goalCategory="";
+        this.goalBudget=a_GoalBudget;
+        this.date=a_Date;
+        this.month=a_Month;
+        this.day=a_Day;
+        this.notes=a_Notes;
+    }
+
 
     public int getDay() { return day; }
 
@@ -91,5 +106,29 @@ public class Data {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getGoal() {
+        return goal;
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
+    }
+
+    public String getGoalCategory() {
+        return goalCategory;
+    }
+
+    public void setGoalCategory(String goalCategory) {
+        this.goalCategory = goalCategory;
+    }
+
+    public Double getGoalBudget() {
+        return goalBudget;
+    }
+
+    public void setGoalBudget(Double goalBudget) {
+        this.goalBudget = goalBudget;
     }
 }

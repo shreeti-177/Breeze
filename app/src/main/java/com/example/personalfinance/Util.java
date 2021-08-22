@@ -1,5 +1,8 @@
 package com.example.personalfinance;
 
+import android.util.Log;
+import android.widget.EditText;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -22,6 +25,14 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Util {
+
+    public static void CheckForNullEntry(String a_TextEntry, EditText a_TextField){
+        if(a_TextEntry.isEmpty()){
+//            Log.e("Null Entry","Empty Field");
+            a_TextField.setError("Required Field");
+            a_TextField.requestFocus();
+        }
+    }
     public static Months getMonth() {
         MutableDateTime a_Epoch = new MutableDateTime();
         a_Epoch.setDate(0);
