@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
             Button m_SignInBtn = findViewById(R.id.signInBtn);
             TextView m_ForgotPasswordLink = findViewById(R.id.forgotPasswordLink);
             TextView m_SignUpLink = findViewById(R.id.signUpLink);
-            m_ProgressBar=findViewById(R.id.progress_log);
+            m_ProgressBar=findViewById(R.id.progressLog);
             m_Auth= FirebaseAuth.getInstance();
 
             m_SignInBtn.setOnClickListener(v -> LoginButtonClicked());
@@ -54,7 +54,8 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d(TAG, "LoginWithEmail: success");
                     FirebaseUser currentUser = m_Auth.getCurrentUser();
                     Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getApplicationContext(), HomePageActivity.class));
+                    FetchData x = new FetchData();
+                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 }
                 else{
                     Log.w(TAG, "LoginWithEmail: failure", task.getException());

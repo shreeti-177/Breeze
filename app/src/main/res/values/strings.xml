@@ -2,15 +2,15 @@
     <string name="app_name">Personal Finance</string>
 
     <string name="prompt_sign_in">Sign In</string>
-    <string name="prompt_sign_up">Sign Up</string>
+    <string name="prompt_sign_up">Create Account</string>
     <string name="prompt_first_name">First Name</string>
     <string name="prompt_last_name">Last Name</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_password_again">Confirm Password</string>
     <string name="existing_account">Already have an account?</string>
-    <string name="forgot_password">Forgot Password?</string>
-    <string name="new_user">New User?</string>
+    <string name="forgot_password">FORGOT PASSWORD?</string>
+    <string name="new_user">Don\'t Have an Account?</string>
     <string name="welcome_user">Welcome User!</string>
     <string name="prompt_next">Next</string>
     <string name="prompt_skip">Skip</string>
@@ -32,7 +32,7 @@
     <string name="prompt_new_category">Select a Category</string>
     <string name="prompt_merchant_name">Enter Merchant Name</string>
     <string name="prompt_amount">Enter Amount</string>
-    <string name ="prompt_date">Pick a date</string>
+    <string name="prompt_date">Pick a date</string>
     <string name="prompt_notes">Note...</string>
 
     <string name="total_budget">Total Budget Amount</string>
@@ -40,5 +40,7 @@
     <string name="delete">Delete</string>
 
     <string name="new_goal">Add a New Goal</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

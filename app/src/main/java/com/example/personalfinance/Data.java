@@ -1,5 +1,9 @@
 package com.example.personalfinance;
 
+import org.joda.time.DateTime;
+
+import java.util.Date;
+
 public class Data {
     private String category;
     private String id;
@@ -15,6 +19,16 @@ public class Data {
     private String goalCategory;
     private Double goalBudget;
 
+//    public DateTime getDateTime() {
+//        return dateTime;
+//    }
+//
+//    public void setDateTime(DateTime dateTime) {
+//        this.dateTime = dateTime;
+//    }
+//
+//    private DateTime dateTime=new DateTime();
+
     public Data(){}
 
     public Data(String a_Id, String a_Category, Double a_Amount, String a_Date, int a_Month, int a_Day){
@@ -28,6 +42,7 @@ public class Data {
 
     public Data(String a_Id, String a_Category, String a_Merchant, Double a_Amount, String a_Date, int a_Month, int a_Day, String a_Notes){
         this.id = a_Id;
+        this.merchant=a_Merchant;
         this.category=a_Category;
         this.amount=a_Amount;
         this.date=a_Date;

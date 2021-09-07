@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".LoginActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".OnboardActivity" />
         <activity android:name=".HomePageActivity" />
         <activity android:name=".BudgetActivity" />
@@ -26,6 +27,9 @@
         <activity android:name=".HabitsActivity" />
         <activity android:name=".PlansActivity" />
         <activity android:name=".NewGoalActivity" />
+        <activity android:name=".HomeActivity" />
+
+
 
 
     </application>

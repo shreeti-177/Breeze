@@ -53,7 +53,7 @@ public class HabitsActivity extends AppCompatActivity {
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_habits);
 //        m_BarChart=findViewById(R.id.barChartTotal);
-        m_RecyclerView = findViewById(R.id.recyclerView);
+        m_RecyclerView = findViewById(R.id.habitsRecycler);
 
         LinearLayoutManager m_LinearLayoutManager = new LinearLayoutManager(this);
         m_RecyclerView.setLayoutManager(m_LinearLayoutManager);

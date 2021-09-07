@@ -62,7 +62,7 @@ public class ExpenseActivity extends AppCompatActivity {
         m_Adapter = new ExpenseAdapter();
         m_RecyclerView.setAdapter(m_Adapter);
 
-        m_ExpenseRef.addValueEventListener(new ValueEventListener() {
+        m_ExpenseRef.orderByChild("month").equalTo(String.valueOf(Util.getMonth())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
@@ -176,7 +176,7 @@ public class ExpenseActivity extends AppCompatActivity {
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
     Months currentMonth = Util.getMonth();
-    private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid).child(String.valueOf(currentMonth));
+    private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(a_Uid);
     private PieChart m_PieChart;
     private Map<String, Double> m_Categories;
     private RecyclerView m_RecyclerView;
