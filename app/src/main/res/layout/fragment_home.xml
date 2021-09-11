@@ -72,6 +72,51 @@
                 android:layout_margin="10dp"/>
         </androidx.cardview.widget.CardView>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <ImageButton
+                android:id="@+id/myBudget"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/icon_wallet"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.327"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Budget"
+                app:layout_constraintEnd_toEndOf="@+id/myBudget"
+                app:layout_constraintStart_toStartOf="@+id/myBudget"
+                app:layout_constraintTop_toBottomOf="@+id/myBudget" />
+
+
+            <ImageButton
+                android:id="@+id/myPlans"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/ic_baseline_track_changes_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.583"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Goals"
+                app:layout_constraintEnd_toEndOf="@+id/myPlans"
+                app:layout_constraintStart_toStartOf="@+id/myPlans"
+                app:layout_constraintTop_toBottomOf="@+id/myPlans" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -84,17 +129,18 @@
             app:cardCornerRadius="20dp"
             android:background="@drawable/toolbar">
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/transactionSection"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
-                    android:id="@+id/recentTransactionText"
+                    android:id="@+id/transactionsText"
                     android:layout_margin="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:text="Recent Transactions"
+                    android:text="Transactions"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
 
@@ -105,17 +151,9 @@
                     android:layout_margin="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/recentTransactionText" />
+                    app:layout_constraintTop_toBottomOf="@id/transactionsText" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <TextView
-                style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_margin="20dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true"
-                android:text="See All"/>
+
         </androidx.cardview.widget.CardView>
 
     </LinearLayout>

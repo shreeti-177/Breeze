@@ -122,8 +122,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         a_CategoryIcon.setImageResource(Util.SetCategoryIcon(category));
 
         a_CategoryName.setText(category);
-        a_CategoryExpense.setText(String.valueOf(expense));
-        a_CategoryBudget.setText(String.valueOf(budget));
+        a_CategoryExpense.setText("Expenses: " + String.valueOf(expense));
+        a_CategoryBudget.setText("Budget: "+String.valueOf(budget));
         a_CategoryTransactions.setText(String.valueOf(numTransactions)+ " transactions");
 
         if(expense<= (0.5*budget)){

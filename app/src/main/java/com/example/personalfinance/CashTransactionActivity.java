@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,6 +43,7 @@ public class CashTransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cash_transactions);
 
+        m_Toolbar=findViewById(R.id.toolBar);
         m_CategoryField = (AutoCompleteTextView) findViewById(R.id.categoryField);
         m_MerchantField=findViewById(R.id.merchantField);
         m_AmountField = findViewById(R.id.amountField);
@@ -49,6 +51,13 @@ public class CashTransactionActivity extends AppCompatActivity {
         m_NoteField = findViewById(R.id.notesField);
         m_ConfirmBtn = findViewById(R.id.confirmButton);
         m_CancelBtn = findViewById(R.id.cancelButton);
+
+        m_Toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         ArrayAdapter<String> itemsAdapter = GetExistingCategoryList();
         m_CategoryField.setAdapter(itemsAdapter);
@@ -141,6 +150,8 @@ public class CashTransactionActivity extends AppCompatActivity {
     private EditText m_NoteField;
     private Button m_ConfirmBtn;
     private Button m_CancelBtn;
+
+    private Toolbar m_Toolbar;
 
     private MaterialDatePicker m_DatePicker;
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();

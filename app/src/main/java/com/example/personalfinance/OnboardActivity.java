@@ -131,7 +131,7 @@ public class OnboardActivity extends AppCompatActivity {
             }
         });
         finishActivity(requestCode);
-        startActivity(new Intent(this, HomePageActivity.class));
+        startActivity(new Intent(this, HomeActivity.class));
     }
 
     private void GetAllCategories() throws IOException {
@@ -172,11 +172,7 @@ public class OnboardActivity extends AppCompatActivity {
         String a_Uid = m_CurrentUser.getUid();
         DatabaseReference m_BaseDataRef= FirebaseDatabase.getInstance().getReference().child("base-data").child(a_Uid);
 
-        DateTime linkedDate = DateTime.now();
-
-        BaseData baseData = new BaseData(m_AccessToken);
-
-        m_BaseDataRef.setValue(baseData).addOnCompleteListener(task -> {
+        m_BaseDataRef.child("access-token").setValue(m_AccessToken).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 Log.d(TAG, "SetAccessToken: success");
                 Log.i(TAG, m_AccessToken);

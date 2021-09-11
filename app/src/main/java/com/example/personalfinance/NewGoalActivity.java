@@ -1,127 +1,207 @@
+//
+// Implementation of the NewGoalActivity class
+//
 package com.example.personalfinance;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 public class NewGoalActivity extends AppCompatActivity {
+
+    /**/
+    /*
+    * NAME
+        NewGoalActivity::onCreate() - Overrides the default onCreate function for the class
+
+    * SYNOPSIS
+        void NewGoalActivity::onCreate(Bundle savedInstanceState);
+        * savedInstanceState => previous state of the activity
+
+    * DESCRIPTION
+        This function will attempt to set the layout for entering a new goal.
+        It listens for 2 events: cancel vs. confirm
+        If user confirms goal, it invokes other functions to validate user entries before adding the
+        goal to the database.
+        If user clicks cancel, it returns to the PlansActivity page, where user can view list of
+        previous plans.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        9:27am, 06/08/2021
+    */
+    /**/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_new_goal);
 
-        m_GoalName=findViewById(R.id.goalName);
+        m_GoalName=findViewById(R.id.goalNameField);
         m_CategoryField=findViewById(R.id.goalCategoryField);
         m_BudgetField=findViewById(R.id.amountField);
         m_NotesField=findViewById(R.id.notesField);
-        m_ConfirmBtn=findViewById(R.id.confirmBudget);
-        m_CancelBtn=findViewById(R.id.cancelAction);
+        Button confirmBtn = findViewById(R.id.confirmButton);
+        Button cancelBtn = findViewById(R.id.cancelButton);
 
+        cancelBtn.setOnClickListener(v -> finish());
 
-        m_CancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        confirmBtn.setOnClickListener(v -> {
+            Data a_Goal = GetNewGoal();
+            m_PlansRef.child(a_Goal.getId()).setValue(a_Goal).addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "AddGoal: success");
+                    Toast.makeText(getApplicationContext(),"New Goal added successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else{
+                    Log.w(TAG, "AddGoal: failure", task.getException());
+                    Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+    }/* protected void onCreate(Bundle savedInstanceState) */
 
-        m_ConfirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Data a_Goal =null;
-                a_Goal = GetNewGoal();
+    /**/
+    /*
+    * NAME
+        NewGoalActivity::GetNewGoal() - Processes user entries for a new goal to instantiate
+        an object of a Data class
 
+    * SYNOPSIS
+        Data NewGoalActivity::GetNewGoal();
+        * savedInstanceState => previous state of the activity
 
-                m_PlansRef.child(a_Goal.getId()).setValue(a_Goal).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull @NotNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Log.d(TAG, "AddGoal: success");
-                            Toast.makeText(getApplicationContext(),"New Goal added successfully", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-                        else{
-                            Log.w(TAG, "AddGoal: failure", task.getException());
-                            Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
-    }
+    * RETURNS
+        Returns a Data object to add to plans in Firebase database
+
+    * DESCRIPTION
+        This function will collect user entries and validate them. Then, it will construct a new
+        Data object and return it to the caller to add to database.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        11:27pm, 06/13/2021
+    */
+    /**/
 
     private Data GetNewGoal(){
-        String a_GoalName = GetGoal();
-        Double a_Amount = GetBudget();
-        String a_Notes=m_NotesField.getText().toString().trim();
 
+        String goalName = GetGoal();
+        Double amount = GetBudget();
+        String notes=m_NotesField.getText().toString().trim();
+        String goalId = m_PlansRef.push().getKey();
 
-        String a_GoalId = m_PlansRef.push().getKey();
+        MutableDateTime epoch = new MutableDateTime();
+        epoch.setDate(0);
+        DateTime now = new DateTime();
+        Months month = Months.monthsBetween(epoch,now);
+        Days day = Days.daysBetween(epoch,now);
 
-        MutableDateTime a_Epoch = new MutableDateTime();
-        a_Epoch.setDate(0);
-        DateTime a_Now = new DateTime();
-        Months a_Month = Months.monthsBetween(a_Epoch,a_Now);
-        Days a_Day = Days.daysBetween(a_Epoch,a_Now);
+        // create new Data object
+        Data goal = new Data (goalId,goalName,amount, now.toString(), month.getMonths(),
+                day.getDays(), notes);
 
-        Log.i("Goal Budget",String.valueOf(a_Amount));
-        Data a_Goal = new Data (a_GoalId,a_GoalName,a_Amount, a_Now.toString(), a_Month.getMonths(),a_Day.getDays(), a_Notes);
-        String a_Category = m_CategoryField.getText().toString().trim();
-        if(!a_Category.isEmpty()){
-            a_Goal.setGoalCategory(a_Category);
+        String category = m_CategoryField.getText().toString().trim();
+
+        // check if user has assigned goal to a particular category
+        // if yes, include it in goal details
+        if(!category.isEmpty()){
+            goal.setGoalCategory(category);
         }
-        return a_Goal;
-    }
 
+        return goal;
+    } /* private Data GetNewGoal() */
+
+
+    /**/
+    /*
+    * NAME
+        NewGoalActivity::GetGoal() - Validates user entry before returning goal name to caller
+
+    * SYNOPSIS
+        String NewGoalActivity::GetGoal();
+
+    * DESCRIPTION
+        This function will attempt to collect the user entered goal name, and check for null entry.
+        If it's null, it will prompt the user to enter a valid value. Otherwise, it will return the
+        value entered.
+
+    * RETURNS
+        Returns validated a_Goal to caller
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        11:40pm, 06/13/2021
+    */
+    /**/
     private String GetGoal(){
         String a_Goal=m_GoalName.getText().toString().trim();
         Util.CheckForNullEntry(a_Goal, m_GoalName);
         return a_Goal;
-    }
+    }/* String NewGoalActivity::GetGoal(); */
 
+
+    /**/
+    /*
+    * NAME
+        NewGoalActivity::GetBudget() - Validates user entry before returning goal budget to caller
+
+    * SYNOPSIS
+        String NewGoalActivity::GetBudget();
+
+    * DESCRIPTION
+        This function will attempt to collect the user entered budget for a goal, and check for null
+        entry. If it's invalid(string or null), it will prompt the user to enter a valid value.
+        Otherwise, it will return the value entered.
+
+    * RETURNS
+        Returns validated budgetValue to caller
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        11:40pm, 06/13/2021
+    */
+    /**/
     private Double GetBudget(){
         String amount = m_BudgetField.getText().toString().trim();
         Util.CheckForNullEntry(amount,m_BudgetField);
-        Double a_Budget = Double.parseDouble(amount);
-        return a_Budget;
-    }
+        return Double.parseDouble(amount);
+    }/* String NewGoalActivity::GetBudget(); */
 
     private EditText m_GoalName;
     private AutoCompleteTextView m_CategoryField;
     private EditText m_BudgetField;
     private EditText m_NotesField;
-    private Button m_ConfirmBtn;
-    private Button m_CancelBtn;
 
-    private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
-    private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth();
-    private DatabaseReference m_PlansRef= FirebaseDatabase.getInstance().getReference().child("plans").child(a_Uid);
+    private final FirebaseAuth m_Auth = FirebaseAuth.getInstance();
+    private final String m_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
+    private final DatabaseReference m_PlansRef= FirebaseDatabase.getInstance().getReference().
+            child("plans").child(m_Uid);
     private static final String TAG = "NewGoalActivity";
 
 

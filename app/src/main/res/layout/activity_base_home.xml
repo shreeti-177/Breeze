@@ -5,10 +5,25 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:logo="@drawable/icon"
+            app:menu="@menu/top_app_bar"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
         <FrameLayout
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
+
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
@@ -39,48 +54,5 @@
             app:layout_constraintTop_toTopOf="@id/bottomAppBar"
             app:fabCustomSize="72dp"
             app:maxImageSize="34dp"/>
-
-
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/addBudget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginRight="260dp"
-        android:layout_marginBottom="80dp"
-        android:text="+ Set Budgets"
-        app:fabCustomSize="72dp"
-        app:layout_anchor="@id/addButton"
-        app:layout_anchorGravity="left"
-        app:maxImageSize="34dp"
-        android:visibility="gone" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/addTransactions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="150dp"
-        android:text="+ Add Transaction"
-        app:fabCustomSize="72dp"
-        app:layout_anchor="@id/addButton"
-        app:layout_anchorGravity="center"
-        app:maxImageSize="34dp"
-        android:visibility="gone"/>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/addGoals"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginLeft="260dp"
-        android:layout_marginBottom="80dp"
-        android:text="+ Set Goals"
-        app:fabCustomSize="72dp"
-        app:layout_anchor="@id/addButton"
-        app:layout_anchorGravity="right"
-        app:maxImageSize="34dp"
-        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

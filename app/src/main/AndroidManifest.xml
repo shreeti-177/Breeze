@@ -20,11 +20,8 @@
         <activity android:name=".LoginActivity"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".OnboardActivity" />
-        <activity android:name=".HomePageActivity" />
         <activity android:name=".BudgetActivity" />
         <activity android:name=".CashTransactionActivity" />
-        <activity android:name=".ExpenseActivity" />
-        <activity android:name=".HabitsActivity" />
         <activity android:name=".PlansActivity" />
         <activity android:name=".NewGoalActivity" />
         <activity android:name=".HomeActivity" />

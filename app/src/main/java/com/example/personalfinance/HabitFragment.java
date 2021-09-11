@@ -65,7 +65,8 @@ public class HabitFragment extends Fragment {
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
     Months currentMonth = Util.getMonth();
-    private DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(a_Uid);
+    private DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().
+            child("summary").child(a_Uid);
     private BarChart m_BarChart;
     private Map<String, Double> m_MonthlyTotals=new HashMap<>();
     private RecyclerView m_RecyclerView;

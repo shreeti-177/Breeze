@@ -1,116 +1,96 @@
+//
+// Implementation of the Home Activity class
+//
 package com.example.personalfinance;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationBarView;
-
-import org.jetbrains.annotations.NotNull;
 
 public class HomeActivity extends AppCompatActivity{
 
-    BottomNavigationView m_BottomNavigationView;
-    FloatingActionButton m_AddBtn;
-    ExtendedFloatingActionButton m_AddBudgetBtn;
-    ExtendedFloatingActionButton m_AddTransactionsBtn;
-    ExtendedFloatingActionButton m_AddGoalsBtn;
+    /**/
+    /*
+    * NAME
+        HomeActivity::onCreate() - Overrides the default onCreate function for a class
 
-    private Boolean expanded = false;
+    * SYNOPSIS
+        void HomeActivity::onCreate(Bundle savedInstanceState);
+        * savedInstanceState => previous state of the activity
 
-    private HomeFragment HomePageFragment = new HomeFragment();
-    private CategoryFragment CategoryPageFragment = new CategoryFragment();
-    private HabitFragment HabitPageFragment = new HabitFragment();
-    private ResourceFragment ResourcePageFragment = new ResourceFragment();
+    * DESCRIPTION
+        This function will attempt to set the layout for the homepage.
+        It will include the toolbar and the bottom navigation bar for all fragments.
+        Then, it will add listeners for each button click on the screen and open the
+        activities associated with each button. If there's no new activity to be opened
+        for a button click, it will default to the home page fragment
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        10:27am, 02/04/2021
+    */
+    /**/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.home_page_bottom_navigation);
+        //On creating activity, set base layout
+        setContentView(R.layout.activity_base_home);
+
         final FragmentManager fragmentManager = getSupportFragmentManager();
+        BottomNavigationView m_BottomNavigationView = findViewById(R.id.bottomNavigation);
+        FloatingActionButton m_AddBtn = findViewById(R.id.addButton);
 
-        m_BottomNavigationView = findViewById(R.id.bottomNavigation);
-        m_AddBtn=findViewById(R.id.addButton);
-        m_AddBudgetBtn=findViewById(R.id.addBudget);
-        m_AddTransactionsBtn=findViewById(R.id.addTransactions);
-        m_AddGoalsBtn=findViewById(R.id.addGoals);
-
-        m_AddBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                expanded=!expanded;
-                m_AddBtn.setImageResource(expanded?R.drawable.ic_baseline_cancel_24:R.drawable.icon_add);
-                m_AddBudgetBtn.setVisibility(expanded?m_AddBudgetBtn.VISIBLE: m_AddBudgetBtn.GONE);
-                m_AddTransactionsBtn.setVisibility(expanded?m_AddTransactionsBtn.VISIBLE: m_AddTransactionsBtn.GONE);
-                m_AddGoalsBtn.setVisibility(expanded?m_AddGoalsBtn.VISIBLE: m_AddGoalsBtn.GONE);
-            }
-        });
-
-        m_AddBudgetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),BudgetActivity.class));
-            }
-        });
-
-        m_AddTransactionsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),CashTransactionActivity.class));
-            }
-        });
-        m_AddGoalsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),PlansActivity.class));
-            }
-        });
-
-        // Set default selection
+        //Set default selection or home page
         m_BottomNavigationView.setSelectedItemId(R.id.home);
-
         fragmentManager.beginTransaction().replace(R.id.frameLayout, HomePageFragment).commit();
 
+        //Open new page to manually add transactions
+        m_AddBtn.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),
+                CashTransactionActivity.class)));
 
-        // handle navigation selection
-        m_BottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
-                Fragment fragment;
-                switch (item.getItemId()) {
-                    case R.id.home:
-                        fragment = HomePageFragment;
-                        break;
-                    case R.id.categories:
-                        fragment = CategoryPageFragment;
-                        break;
-                    case R.id.habits:
-                        fragment = HabitPageFragment;
-                        break;
-                    case R.id.resources:
-                        fragment = ResourcePageFragment;
-                        break;
-                    default:
-                    fragment = HomePageFragment;
+        // Handle navigation selection
+        m_BottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                //Navigate to expenses by category page
+                case R.id.categories:
+                    fragment = CategoryPageFragment;
                     break;
-                }
-                fragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit();
-                return true;
+                //Navigate to expense habits page
+                case R.id.habits:
+                    fragment = HabitPageFragment;
+                    break;
+                //Navigate to the resources page
+                case R.id.resources:
+                    fragment = ResourcePageFragment;
+                    break;
+                //Default to viewing home page
+                default:
+                fragment = HomePageFragment;
+                break;
             }
+            fragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit();
+            return true;
         });
 
-    }
+    } /*protected void onCreate(Bundle savedInstanceState)*/
 
+
+    //Create new fragment instance for each navigation button
+    private final HomeFragment HomePageFragment = new HomeFragment();
+    private final CategoryFragment CategoryPageFragment = new CategoryFragment();
+    private final HabitFragment HabitPageFragment = new HabitFragment();
+    private final ResourceFragment ResourcePageFragment = new ResourceFragment();
 
 }

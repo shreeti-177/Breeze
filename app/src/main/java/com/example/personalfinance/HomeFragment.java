@@ -1,7 +1,9 @@
+//
+// Implementation of the Home Fragment class
+//
 package com.example.personalfinance;
 
-import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,17 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,35 +26,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static android.view.View.GONE;
 
 public class HomeFragment extends Fragment {
-
-    private View m_RootView;
-    private TextView m_UserName;
-    private LineChart m_LineChart;
-    private RecyclerView m_HomePageView;
-    private HomeAdapter m_HomeAdapter;
-
-    public List<Data> m_AllTransactions = new ArrayList<>();
-    private Summary m_Summary=new Summary();
-
-
-    DateTime dt = DateTime.now();
-    String month = dt.toString("MMM-YYYY");
-    private Double m_MonthlyExpense = 0.0;
-
-
-    private DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference().child("expenses").child(Util.getUid());
-    private DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(Util.getUid());
-    public DatabaseReference m_BaseDataRef = FirebaseDatabase.getInstance().getReference().child("base-data").child(Util.getUid());
-
-    private List<Summary> m_SummaryList=new ArrayList<>();
-
-    private final String TAG = "HomeFragment";
 
     public HomeFragment() {
         // Required empty public constructor
@@ -70,167 +43,200 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**/
+    /*
+    * NAME
+        HomeActivity::onCreateView() - Overrides the default onCreateView function for a fragment
+
+    * SYNOPSIS
+        void HomeFragment::onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState);
+        * inflater => inflater used to instantiate fragment_home layout XML to view objects
+        * container => group that contains children views
+        * savedInstanceState => previous state of the activity
+
+    * DESCRIPTION
+        This function will attempt to set the default home page fragment.
+        It will include the toolbar and the bottom navigation bar.
+        Then, it will add a dashboard chart to show monthly expenses.
+        In the bottom half, it will show all transactions (debit and credit) till date.
+        If there's no expenses, it will note it in the screen.
+        It will also provide options to set budget and set new goals.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        12:37pm, 02/04/2021
+    */
+    /**/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
+        //Inflate the layout for this fragment
         m_RootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        //Set Welcome Message for User
-        m_UserName=m_RootView.findViewById(R.id.userNameField);
-        m_UserName.setText(Util.m_Auth.getCurrentUser().getDisplayName());
+        ImageButton m_AddBudgetBtn = m_RootView.findViewById(R.id.myBudget);
+        ImageButton m_AddGoalsBtn = m_RootView.findViewById(R.id.myPlans);
 
-        //Initialize Dashboard Chart
-        m_LineChart=m_RootView.findViewById(R.id.dashboardChart);
-        SetUpLineChart();
+        //Start new activity on button clicks for setting budget and goals
+        m_AddBudgetBtn.setOnClickListener(v -> startActivity(new Intent(getContext(),
+                BudgetActivity.class)));
 
-        m_SummaryList.clear();
-        //Fetch Summary Data and Load Chart
-        m_SummaryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()){
-                    Summary a_Summary = dataSnapshot.getValue(Summary.class);
-                    m_SummaryList.add(a_Summary);
-                    Log.i("Summary",String.valueOf(a_Summary.getMonth()));
-                }
-                //Set Up chart with m_SummaryList
-                LoadLineChart();
-            }
+        m_AddGoalsBtn.setOnClickListener(v -> startActivity(new Intent(getContext(),
+                PlansActivity.class)));
 
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+        //Display current user's name in Home screen
+        TextView m_UserName = m_RootView.findViewById(R.id.userNameField);
+        m_UserName.setText(Objects.requireNonNull(Util.m_Auth.getCurrentUser()).getDisplayName());
 
-            }
-        });
+        DisplayDashboard();
 
         //Set Up Recycler View for Recent Transactions
-        m_HomePageView=m_RootView.findViewById(R.id.homePage);
+        m_TransactionsText = m_RootView.findViewById(R.id.transactionsText);
+        m_HomePageView = m_RootView.findViewById(R.id.homePage);
         m_HomePageView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        m_HomeAdapter=new HomeAdapter();
+
+        m_HomeAdapter = new HomeAdapter();
         m_HomePageView.setAdapter(m_HomeAdapter);
 
+        DisplayTransactions();
 
-        //Fetch Recent Transactions and send data to Recycler View for display
+        return m_RootView;
+    } /*void HomeFragment::onCreateView(LayoutInflater inflater, ViewGroup container,
+                            Bundle savedInstanceState);*/
+
+
+
+    /**/
+    /*
+    * NAME
+        HomeActivity::DisplayTransactions() - Displays all transactions in descending order by date
+
+    * SYNOPSIS
+        void HomeFragment::DisplayTransactions();
+
+    * DESCRIPTION
+        This function will attempt to fetch all transactions (debit and credit) from Firebase
+        and display them on screen. Since the data keeps changing, it sets up an adapter to
+        constantly listen to any data changes and update the list periodically. In the event that
+        it's a new user and there are no transactions, it will display a message to notify the user.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        12:50pm, 02/04/2021
+    */
+    /**/
+    private void DisplayTransactions(){
+
+        //Read transaction data from Firebase
         //Order by "day" to get transactions in ascending order
-//.startAt(Util.getFirstDay()).endAt(Util.getCurrentDay())
         m_ExpenseRef.orderByChild("day").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Data data = dataSnapshot.getValue(Data.class);
+                    assert data != null;
                     Double a_Amount = data.getAmount();
+
+                    //Disclude data missing merchant name, date or amount
                     if (data.getMerchant()==null||data.getDate()==null||a_Amount==null){
                         continue;
                     }
                     m_AllTransactions.add(data);
                 }
 
-                //Notify Transactions Adapter that dataset has changed (due to added transactions)
+                //if transactions list is empty, collapse section for transactions
+                if(m_AllTransactions.size()==0){
+                    m_TransactionsText.setText("Your expenses will be listed here");
+                    m_TransactionsText.setTextSize(16f);
+                    m_HomePageView.setVisibility(GONE);
+                }
+
+                //Dataset changed due to added transactions
                 m_HomeAdapter.notifyDataSetChanged();
 
-                //Add in the new transactions and update the recycler view
+                //Update recycler view with new transactions
                 m_HomeAdapter.SetTransactions(m_AllTransactions);
             }
 
             @Override
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                Log.i("Error retrieving expenses",error.getDetails());
+                Log.i("Error retrieving expense data",error.getMessage(), error.toException());
             }
         });
+    }   /* private void DisplayTransactions() */
 
-        return m_RootView;
-    }
 
-    private void SetUpLineChart(){
-        m_LineChart.setTouchEnabled(true);
-        m_LineChart.setPinchZoom(true);
-//        m_LineChart.setBackground(getDrawable(R.drawable.chart));
+    /**/
+    /*
+    * NAME
+        HomeActivity::DisplayDashboard() - Displays monthly expenses in a chart
 
-        m_LineChart.setDrawGridBackground(false);
-        m_LineChart.getAxisRight().setEnabled(false);
-        m_LineChart.getDescription().setEnabled(false);
+    * SYNOPSIS
+        void HomeFragment::DisplayDashboard();
 
-        m_LineChart.getAxisLeft().setDrawGridLines(false);
-        m_LineChart.getXAxis().setDrawGridLines(false);
+    * DESCRIPTION
+        This function will attempt to fetch monthly expenses from Firebase for the past 6 months
+        and build a line chart with the data. In the event that it's a new user and there are no
+        expense summaries, it will display a message to notify the user.
 
-        //set legend disable or enable to hide {the left down corner name of graph}
-        Legend legend = m_LineChart.getLegend();
-        legend.setEnabled(false);
-    }
+    * AUTHOR
+        Shreeti Shrestha
 
-    private void LoadLineChart(){
-        ArrayList<Entry> entryArrayList = new ArrayList<>();
-//        Description description = new Description();
-//        description.setText("Days Data");
-//        m_LineChart.setDescription(description);
+    * DATE
+        1:15pm, 02/05/2021
+    */
+    /**/
 
-        List<String> a_XAxisLabel = new ArrayList<>();
-        for (int i=0;i<m_SummaryList.size();i++){
-            Log.i("Expenses",String.valueOf(m_SummaryList.get(i).getExpense()));
-            Float y_value = m_SummaryList.get(i).getExpense().floatValue();
-            a_XAxisLabel.add(m_SummaryList.get(i).getMonth());
-            entryArrayList.add(new Entry(i, y_value));
-        }
+    private void DisplayDashboard(){
 
-        XAxis a_XAxis = m_LineChart.getXAxis();
-        m_LineChart.getAxisLeft().setDrawLabels(false);
-//        m_LineChart.getAxisLeft().setEnabled(false);
+        LineChart chart = m_RootView.findViewById(R.id.dashboardChart);
 
-        a_XAxis.setValueFormatter(new ValueFormatter() {
+        //Clear summaryList to fetch updated data
+        m_SummaryList.clear();
+
+        //Fetch Summary Data from Firebase
+        m_SummaryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public String getFormattedValue(float value) {
-                return a_XAxisLabel.get((int) value);
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()){
+                    Summary a_Summary = dataSnapshot.getValue(Summary.class);
+                    m_SummaryList.add(a_Summary);
+                }
+
+                //If no summaries till date, don't load dashboard
+                if(m_SummaryList.size()==0){
+                    Log.i("No chart data","No summaries to show");
+                    chart.setNoDataText("No Expenses till date!");
+                    return;
+                }
+
+                Dashboard m_Dashboard = new Dashboard(chart);
+                m_Dashboard.SetUpLineChart("Monthly Expenses");
+                m_Dashboard.LoadLineChart(m_SummaryList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Log.e("Error fetching summary data",error.getMessage(),error.toException());
             }
         });
+    }   /* private void DisplayDashboard() */
 
-        a_XAxis.setLabelRotationAngle(-45f);
-        a_XAxis.setGranularityEnabled(true);
+    private HomeAdapter m_HomeAdapter;
+    private View m_RootView;
+    private RecyclerView m_HomePageView;
+    private TextView m_TransactionsText;
 
-        a_XAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        //LineDataSet is the line on the graph
-        LineDataSet lineDataSet = new LineDataSet(entryArrayList, "This is y bill");
+    public List<Data> m_AllTransactions = new ArrayList<>();
+    private final List<Summary> m_SummaryList=new ArrayList<>();
 
-//        lineDataSet.setLineWidth(4f);
-//        lineDataSet.setColor(Color.BLACK);
-//        lineDataSet.setDrawCircles(true);
-        lineDataSet.setCircleHoleColor(Color.WHITE);
-        lineDataSet.setCircleColor(Color.BLACK);
-        lineDataSet.setHighLightColor(Color.YELLOW);
-        lineDataSet.setDrawValues(true);
-        lineDataSet.setCircleRadius(5f);
-
-        //to make the smooth line as the graph is adapt change so smooth curve
-        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-
-        //to enable the cubic density : if 1 then it will be sharp curve
-        lineDataSet.setCubicIntensity(0.2f);
-
-        //to fill the below of smooth line in graph
-        lineDataSet.setDrawFilled(false);
-//        lineDataSet.setFillColor(Color.BLACK);
-        //set the transparency
-        lineDataSet.setFillAlpha(80);
-
-        //set the gradiant then the above draw fill color will be replace
-//            Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.gradiant);
-//            lineDataSet.setFillDrawable(drawable);
-
-
-//            lineDataSet.setColor(ColorTemplate.COLORFUL_COLORS.length);
-
-
-        ArrayList<ILineDataSet> iLineDataSetArrayList = new ArrayList<>();
-        iLineDataSetArrayList.add(lineDataSet);
-
-        //LineData is the data accord
-        LineData lineData = new LineData(iLineDataSetArrayList);
-        lineData.setValueTextSize(8f);
-        lineData.setValueTextColor(Color.BLACK);
-
-        m_LineChart.setData(lineData);
-        m_LineChart.invalidate();
-
-    }
+    private final DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference()
+            .child("expenses").child(Util.getUid());
+    private final DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference()
+            .child("summary").child(Util.getUid());
 }

@@ -160,8 +160,8 @@ public class BudgetActivity extends AppCompatActivity {
     }
 
     private void StoreMonthlyBudget(Double a_Budget){
-            DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(a_Uid).child(String.valueOf(currentMonth));
-            m_SummaryRef.child("monthly-budget").setValue(a_Budget).addOnCompleteListener(new OnCompleteListener<Void>() {
+            DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(a_Uid).child(String.valueOf(currentMonth.getMonths()));
+            m_SummaryRef.child("budget").setValue(a_Budget).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull @NotNull Task<Void> task) {
                     if (task.isSuccessful()) {
@@ -188,8 +188,8 @@ public class BudgetActivity extends AppCompatActivity {
 
 //        Selecting a Category for setting budget
         m_CategoryField = (AutoCompleteTextView) a_View.findViewById(R.id.categoryField);
-        Button a_ConfirmBtn = a_View.findViewById(R.id.confirmBudget);
-        Button a_CancelBtn = a_View.findViewById(R.id.cancelAction);
+        Button a_ConfirmBtn = a_View.findViewById(R.id.confirmButton);
+        Button a_CancelBtn = a_View.findViewById(R.id.cancelButton);
         m_CategoryField.setText(Category.getText());
 
         a_ConfirmBtn.setOnClickListener(v -> {
