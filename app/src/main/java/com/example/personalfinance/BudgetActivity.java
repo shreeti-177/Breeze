@@ -1,46 +1,27 @@
 package com.example.personalfinance;
 
-import android.app.Dialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,9 +33,8 @@ import org.joda.time.MutableDateTime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Objects;
 
-import static java.security.AccessController.getContext;
+import java.util.Objects;
 
 public class BudgetActivity extends AppCompatActivity {
     @Override
@@ -62,18 +42,27 @@ public class BudgetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
 
-        m_RecyclerView = findViewById(R.id.recyclerView);
+        //Display current budget month
+        TextView budgetMonth=findViewById(R.id.budgetMonth);
+        DateTime date = new DateTime();
+        String month = date.toString("MMM-yyyy");
+        budgetMonth.setText("Budget Month: " + month);
 
+
+
+        RecyclerView m_RecyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager m_LinearLayoutManager = new LinearLayoutManager(this);
         m_RecyclerView.setLayoutManager(m_LinearLayoutManager);
 
+        //Query to fetch category budgets for current month from Firebase
         FirebaseRecyclerOptions<Data> options = new FirebaseRecyclerOptions.Builder<Data>()
-                .setQuery(m_BudgetRef, Data.class)
+                .setQuery(Util.GetBudgetReference(), Data.class)
                 .build();
 
         m_Adapter = new BudgetAdapter(options);
         m_RecyclerView.setAdapter(m_Adapter);
 
+        //Link all categories to their layouts
         Apparel = findViewById(R.id.Apparel);
         Community = findViewById(R.id.Community);
         Food = findViewById(R.id.Food);
@@ -84,13 +73,51 @@ public class BudgetActivity extends AppCompatActivity {
         Payments = findViewById(R.id.Payments);
         Recreation = findViewById(R.id.Recreation);
         Travel = findViewById(R.id.Travel);
+        TextView totalBudget = findViewById(R.id.totalBudget);
 
-        // Put it inside a button for future use if needed
-//        SharedPreferences sharedPreferences = PreferenceManager
-//                .getDefaultSharedPreferences(this);
-//        SharedPreferences.Editor editor = sharedPreferences.edit().clear();
-//        editor.commit();
+//        FlushSavedPreferences();
+        LoadAllSavedPreferences();
+        ButtonClickListeners();
 
+        //Get existing budgets for current month
+        Util.GetBudgetReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                Double total = 0.0;
+                if (snapshot.hasChildren()) {
+                    for (DataSnapshot snap : snapshot.getChildren()) {
+                        Data data = snap.getValue(Data.class);
+                        assert data != null;
+                        total += data.getAmount();
+                        totalBudget.setText("Total Budget: " + total);
+                    }
+                }
+                Double finalTotal = total;
+                Util.m_Executor.execute(()-> BackgroundTasks.StoreBudgetSummary(finalTotal));
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Log.i("Error getting budget data",error.getMessage(), error.toException());
+            }
+        });
+
+    }
+
+    private void ButtonClickListeners(){
+        Apparel.setOnClickListener(v -> OpenCategoryDialog(Apparel));
+        Community.setOnClickListener(v -> OpenCategoryDialog(Community));
+        Food.setOnClickListener(v -> OpenCategoryDialog(Food));
+        Education.setOnClickListener(v -> OpenCategoryDialog(Education));
+        Healthcare.setOnClickListener(v -> OpenCategoryDialog(Healthcare));
+        Merchandise.setOnClickListener(v -> OpenCategoryDialog(Merchandise));
+        Miscellaneous.setOnClickListener(v -> OpenCategoryDialog(Miscellaneous));
+        Payments.setOnClickListener(v -> OpenCategoryDialog(Payments));
+        Recreation.setOnClickListener(v -> OpenCategoryDialog(Recreation));
+        Travel.setOnClickListener(v -> OpenCategoryDialog(Travel));
+    }
+
+    private void LoadAllSavedPreferences(){
         LoadSavedPreferences(Apparel);
         LoadSavedPreferences(Community);
         LoadSavedPreferences(Food);
@@ -101,125 +128,52 @@ public class BudgetActivity extends AppCompatActivity {
         LoadSavedPreferences(Payments);
         LoadSavedPreferences(Recreation);
         LoadSavedPreferences(Travel);
-
-        Apparel.setOnClickListener(v -> {
-            OpenCategoryDialog(Apparel);
-        });
-
-        Community.setOnClickListener(v -> {
-            OpenCategoryDialog(Community);
-        });
-        Food.setOnClickListener(v -> {
-            OpenCategoryDialog(Food);
-        });
-        Education.setOnClickListener(v -> {
-            OpenCategoryDialog(Education);
-        });
-        Healthcare.setOnClickListener(v -> {
-            OpenCategoryDialog(Healthcare);
-        });
-        Merchandise.setOnClickListener(v -> {
-            OpenCategoryDialog(Merchandise);
-        });
-        Miscellaneous.setOnClickListener(v -> {
-            OpenCategoryDialog(Miscellaneous);
-        });
-        Payments.setOnClickListener(v -> {
-            OpenCategoryDialog(Payments);
-        });
-        Recreation.setOnClickListener(v -> {
-            OpenCategoryDialog(Recreation);
-        });
-        Travel.setOnClickListener(v -> {
-            OpenCategoryDialog(Travel);
-        });
-
-
-        TextView m_TotalBudget = findViewById(R.id.totalBudget);
-
-        m_BudgetRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                Double a_Total = 0.0;
-                if (snapshot.hasChildren()) {
-                    for (DataSnapshot snap : snapshot.getChildren()) {
-                        Data data = snap.getValue(Data.class);
-                        a_Total += data.getAmount();
-                        m_TotalBudget.setText("Total Budget: " + String.valueOf(a_Total));
-                    }
-                }
-                StoreMonthlyBudget(a_Total);
-            }
-
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-            }
-
-        });
-
     }
 
-    private void StoreMonthlyBudget(Double a_Budget){
-            DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().child("summary").child(a_Uid).child(String.valueOf(currentMonth.getMonths()));
-            m_SummaryRef.child("budget").setValue(a_Budget).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull @NotNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "SetMonthlyBudgetSummary: success");
-                        Toast.makeText(getApplicationContext(), "Monthly budget summary set successfully", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.w(TAG, "SetMonthlyBudgetSummary: failure", task.getException());
-                        Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-            });
+    private void FlushSavedPreferences(){
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit().clear();
+        editor.apply();
     }
-    private void OpenCategoryDialog(Button Category) {
 
+    private void OpenCategoryDialog(Button a_Category) {
         MaterialAlertDialogBuilder addDialog = new MaterialAlertDialogBuilder(this);
         LayoutInflater inflater = LayoutInflater.from(this);
-        a_View = inflater.inflate(R.layout.dialog_category_budget, null);
-        addDialog.setView(a_View);
+        m_View = inflater.inflate(R.layout.dialog_category_budget, null);
+        addDialog.setView(m_View);
 
         final AlertDialog dialog = addDialog.create();
         dialog.show();
         dialog.setCancelable(false);
 
 //        Selecting a Category for setting budget
-        m_CategoryField = (AutoCompleteTextView) a_View.findViewById(R.id.categoryField);
-        Button a_ConfirmBtn = a_View.findViewById(R.id.confirmButton);
-        Button a_CancelBtn = a_View.findViewById(R.id.cancelButton);
-        m_CategoryField.setText(Category.getText());
+        m_CategoryField = m_View.findViewById(R.id.categoryField);
+        Button confirmBtn = m_View.findViewById(R.id.confirmButton);
+        Button cancelBtn = m_View.findViewById(R.id.cancelButton);
+        m_CategoryField.setText(a_Category.getText());
 
-        a_ConfirmBtn.setOnClickListener(v -> {
+        confirmBtn.setOnClickListener(v -> {
             Data a_Budget = SetCategoryBudget();
-
-            m_BudgetRef.child(a_Budget.getCategory()).setValue(a_Budget).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull @NotNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "SetCategoryBudget: success");
-                        Toast.makeText(getApplicationContext(), "Budget for this category set successfully", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.w(TAG, "SetCategoryBudget: failure", task.getException());
-                        Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+            Util.GetBudgetReference().child(a_Budget.getCategory()).setValue(a_Budget)
+                    .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "SetCategoryBudget: success");
+                    Toast.makeText(getApplicationContext(), "Budget for this category set successfully",
+                            Toast.LENGTH_SHORT).show();
+                    //disable the button once budget is set for a category
+                    savePreferences(a_Category.getText().toString(), "true");
+                    a_Category.setEnabled(false);
+                    dialog.dismiss();
+                } else {
+                    Log.w(TAG, "SetCategoryBudget: failure", task.getException());
+                    Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException())
+                            .getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
             });
-            savePreferences(Category.getText().toString(), "true");
-            Category.setEnabled(false);
-            dialog.dismiss();
-
         });
 
-        a_CancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        cancelBtn.setOnClickListener(v -> dialog.dismiss());
     }
 
     private void savePreferences(String key,String value) {
@@ -227,44 +181,34 @@ public class BudgetActivity extends AppCompatActivity {
                 .getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key,value);
-        editor.commit();
+        editor.apply();
     }
 
     private void LoadSavedPreferences(Button Category){
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-
-        if (sharedPreferences.getString(Category.getText().toString(),null) != null)
-            Category.setEnabled(false);
-        else
-            Category.setEnabled(true);
+        Category.setEnabled(sharedPreferences.getString(Category.getText().toString(), null) == null);
     }
 
     private Data SetCategoryBudget() {
-        EditText a_AmountField = a_View.findViewById(R.id.amountField);
-        String a_Amount = a_AmountField.getText().toString().trim();
+        EditText amountField = m_View.findViewById(R.id.amountField);
+        String amount = amountField.getText().toString().trim();
 
-        if (a_Amount.isEmpty()) {
-            Log.e(TAG, "Empty Field");
-            a_AmountField.setError("Required Field");
-            a_AmountField.requestFocus();
-        }
-        String a_BudgetId = m_BudgetRef.push().getKey();
-        DateFormat a_DateFormat = new SimpleDateFormat("MM-dd-yyyy");
-        Calendar a_Calendar = Calendar.getInstance();
-        String a_Date = a_DateFormat.format(a_Calendar.getTime());
+        Util.CheckForNullEntry(amount,amountField);
+        String budgetId = Util.GetBudgetReference().push().getKey();
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        Calendar calendar = Calendar.getInstance();
+        String date = dateFormat.format(calendar.getTime());
 
-        MutableDateTime a_Epoch = new MutableDateTime();
-        a_Epoch.setDate(0);
-        DateTime a_Now = new DateTime();
-        Months a_Month = Months.monthsBetween(a_Epoch, a_Now);
-        Days a_Day = Days.daysBetween(a_Epoch,a_Now);
+        MutableDateTime epoch = new MutableDateTime();
+        epoch.setDate(0);
+        DateTime now = new DateTime();
+        Months month = Months.monthsBetween(epoch, now);
+        Days day = Days.daysBetween(epoch,now);
+        String category = m_CategoryField.getText().toString();
 
-        String a_Category = m_CategoryField.getText().toString();
-
-        Data a_Budget = new Data(a_BudgetId, a_Category, Double.parseDouble(a_Amount), a_Date, a_Month.getMonths(), a_Day.getDays());
-
-        return a_Budget;
+        return new Data(budgetId, category, Double.parseDouble(amount), date,
+                month.getMonths(), day.getDays());
     }
 
 
@@ -292,12 +236,7 @@ public class BudgetActivity extends AppCompatActivity {
     private Button Travel;
     private AutoCompleteTextView m_CategoryField;
 
-    private View a_View;
-    private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
-    private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth();
-    private DatabaseReference m_BudgetRef = FirebaseDatabase.getInstance().getReference().child("budget").child(a_Uid).child(String.valueOf(currentMonth));
-    private RecyclerView m_RecyclerView;
+    private View m_View;
     private BudgetAdapter m_Adapter;
     private final static String TAG = "BudgetActivity";
 }

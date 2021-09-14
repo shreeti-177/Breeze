@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
+import javax.annotation.CheckForNull;
+
 public class LoginActivity extends AppCompatActivity {
 
     @Override
@@ -119,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "LoginWithEmail: success");
                 FirebaseUser currentUser = m_Auth.getCurrentUser();
                 Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_SHORT).show();
-                FetchData x = new FetchData();
                 startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             }
             else{
@@ -154,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
     /**/
     private String GetUserEmail(){
         String userEmail=m_UserEmail.getText().toString().trim();
-        Util.CheckForNullEntry(userEmail, m_UserEmail);
+        CheckForNullEntry(userEmail,m_UserEmail);
         if(!(userEmail.contains("@"))){
             m_UserEmail.setError("Invalid Email Address");
             m_UserEmail.requestFocus();
@@ -185,9 +186,38 @@ public class LoginActivity extends AppCompatActivity {
     /**/
     private String GetUserPassword(){
         String userPassword=m_UserPassword.getText().toString().trim();
-        Util.CheckForNullEntry(userPassword,m_UserPassword);
+        CheckForNullEntry(userPassword,m_UserPassword);
         return userPassword;
     } /* private String GetUserPassword() */
+
+    /**/
+    /*
+    * NAME
+        LoginActivity::CheckForNullEntry() - Checks if a text field has a null value
+
+    * SYNOPSIS
+        void LoginActivity::CheckForNullEntry(a_TextEntry, a_TextField);
+        * a_TextEntry: user entered value
+        * a_TextField: the field where the user has supposedly entered their desired value
+
+    * DESCRIPTION
+        This function will attempt to collect get the user entries and check if they're null before
+        verifying that they're authenticated. If the value is indeed null, it will display an error
+        message and focus on the text field to prompt the user to enter a valid non-null value.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        08:00pm, 02/02/2021
+    */
+    /**/
+    private void CheckForNullEntry(String a_TextEntry, EditText a_TextField){
+        if(a_TextEntry.isEmpty()){
+            a_TextField.setError("Required Field");
+            a_TextField.requestFocus();
+        }
+    }/* private void CheckForNullEntry(String a_TextEntry, EditText a_TextField) */
 
     private EditText m_UserEmail;
     private EditText m_UserPassword;

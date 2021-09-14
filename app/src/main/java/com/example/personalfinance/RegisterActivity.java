@@ -194,7 +194,7 @@ public class RegisterActivity extends AppCompatActivity {
     /**/
     private String GetUserEmail(){
         String userEmail=m_NewUserEmail.getText().toString().trim();
-        Util.CheckForNullEntry(userEmail, m_NewUserEmail);
+        CheckForNullEntry(userEmail, m_NewUserEmail);
         if(!(userEmail.contains("@"))){
             m_NewUserEmail.setError("Invalid Email Address");
             m_NewUserEmail.requestFocus();
@@ -227,8 +227,8 @@ public class RegisterActivity extends AppCompatActivity {
     private String GetUserPassword(){
         String userPassword=m_NewUserPassword.getText().toString().trim();
         String confirmUserPassword =m_ConfirmUserPassword.getText().toString().trim();
-        Util.CheckForNullEntry(userPassword,m_NewUserPassword);
-        Util.CheckForNullEntry(confirmUserPassword,m_ConfirmUserPassword);
+        CheckForNullEntry(userPassword,m_NewUserPassword);
+        CheckForNullEntry(confirmUserPassword,m_ConfirmUserPassword);
 
         if(userPassword.length()<6){
             Log.e(TAG, "Password should be at least 6 characters");
@@ -243,6 +243,36 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return userPassword;
     }/* private String GetUserPassword() */
+
+    /**/
+    /*
+    * NAME
+        RegisterActivity::CheckForNullEntry() - Checks if a text field has a null value
+
+    * SYNOPSIS
+        void RegisterActivity::CheckForNullEntry(a_TextEntry, a_TextField);
+        * a_TextEntry: user entered value
+        * a_TextField: the field where the user has supposedly entered their desired value
+
+    * DESCRIPTION
+        This function will attempt to collect get the user entries and check if they're null before
+        verifying that they're authenticated. If the value is indeed null, it will display an error
+        message and focus on the text field to prompt the user to enter a valid non-null value.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        08:00pm, 02/02/2021
+    */
+    /**/
+    private void CheckForNullEntry(String a_TextEntry, EditText a_TextField){
+        if(a_TextEntry.isEmpty()){
+            a_TextField.setError("Required Field");
+            a_TextField.requestFocus();
+        }
+    }/* private void CheckForNullEntry(String a_TextEntry, EditText a_TextField) */
+
 
     private EditText m_NewUserEmail;
     private EditText m_NewUserPassword;

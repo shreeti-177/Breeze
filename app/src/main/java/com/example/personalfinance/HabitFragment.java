@@ -40,7 +40,6 @@ public class HabitFragment extends Fragment {
     }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,17 +61,7 @@ public class HabitFragment extends Fragment {
         m_RecyclerView.setAdapter(m_Adapter);
         return m_RootView;
     }
-    private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
-    private String a_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
-    Months currentMonth = Util.getMonth();
-    private DatabaseReference m_SummaryRef = FirebaseDatabase.getInstance().getReference().
-            child("summary").child(a_Uid);
-    private BarChart m_BarChart;
-    private Map<String, Double> m_MonthlyTotals=new HashMap<>();
+
     private RecyclerView m_RecyclerView;
     private HabitsAdapter m_Adapter;
-    private List<String> m_Months=new ArrayList<>();
-    private List<Float> m_Expenses=new ArrayList<>();
-    private List<BarEntry> m_Entries = new ArrayList<>();
-    private static final String TAG = "HabitsActivity";
 }

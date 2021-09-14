@@ -30,7 +30,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
             <TextView
-                android:id="@+id/merchantField"
+                android:id="@+id/categoryField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -41,7 +41,7 @@
                 app:layout_constraintStart_toEndOf="@id/categoryTag"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed"
-                tools:text="Merchant Name" />
+                tools:text="Category Name" />
 
             <TextView
                 android:id="@+id/dateField"
@@ -52,24 +52,32 @@
                 android:textColor="@android:color/darker_gray"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/categoryTag"
-                app:layout_constraintTop_toBottomOf="@+id/merchantField" />
+                app:layout_constraintTop_toBottomOf="@+id/categoryField" />
 
             <TextView
-                android:id="@+id/amountField"
+                android:id="@+id/categoryBudget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="+/- Amount"
-                android:textColor="#6FCF97"
+                android:text="Amount"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/merchantField" />
+                app:layout_constraintTop_toTopOf="@+id/categoryField" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
+<!--     -->
+<!--            <ImageButton-->
+<!--                android:id="@+id/categoryOptions"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@drawable/ic_baseline_more_vert_24"-->
+<!--                android:background="@color/white"-->
+<!--                />-->

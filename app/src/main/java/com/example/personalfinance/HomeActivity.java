@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class HomeActivity extends AppCompatActivity{
+    private BackgroundTasks t=new BackgroundTasks();
 
     /**/
     /*
@@ -44,6 +45,9 @@ public class HomeActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Util.m_Executor.execute(()->
+                        t.UpdateOnlineTransactions()
+        );
         //On creating activity, set base layout
         setContentView(R.layout.activity_base_home);
 

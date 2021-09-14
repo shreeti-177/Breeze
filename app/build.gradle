@@ -65,7 +65,7 @@ dependencies {
 
     // Plaid Dependencies
     implementation 'com.plaid.link:sdk-core:3.2.4'
-    implementation ('com.plaid:plaid-java:9.0.0-beta-4') {
+    implementation ('com.plaid:plaid-java:9.2.0') {
         exclude group: 'org.apache.oltu.oauth2', module: 'org.apache.oltu.oauth2.common'
     }
 

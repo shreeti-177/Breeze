@@ -1,45 +1,29 @@
 package com.example.personalfinance;
 
-import android.content.Intent;
+
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.plaid.client.ApiClient;
 import com.plaid.client.request.PlaidApi;
 
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static androidx.core.content.ContextCompat.startActivity;
 
 public class Util {
 
@@ -157,6 +141,19 @@ public class Util {
         return categoryExpense;
     }
 
+    public static DatabaseReference GetSummaryReference(){
+        return FirebaseDatabase.getInstance().getReference().child("summary").child(m_Uid)
+                .child(String.valueOf(Util.getMonth().getMonths()));
+    }
+
+    public static DatabaseReference GetBudgetReference(){
+        return FirebaseDatabase.getInstance().getReference().child("budget").child(m_Uid)
+                .child(String.valueOf(Util.getMonth().getMonths()));
+    }
+
+    public static DatabaseReference GetExpenseReference(){
+        return FirebaseDatabase.getInstance().getReference().child("expenses").child(m_Uid);
+    }
     public static String getUid() {
         return m_Uid;
     }
