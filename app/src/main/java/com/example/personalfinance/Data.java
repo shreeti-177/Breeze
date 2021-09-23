@@ -10,6 +10,8 @@ public class Data {
     private Double amount;
     private String date;
 
+    private Double savings;
+
     private int month;
     private int day;
     private String merchant;
@@ -146,4 +148,8 @@ public class Data {
     public void setGoalBudget(Double goalBudget) {
         this.goalBudget = goalBudget;
     }
+
+    public void setSavings(Double savings){ this.savings = savings; }
+
+    public Double getSavings (){ return savings;}
 }

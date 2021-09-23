@@ -5,6 +5,7 @@ package com.example.personalfinance;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 
+import java.util.List;
 import java.util.Objects;
 
 public class NewGoalActivity extends AppCompatActivity {
@@ -62,11 +64,15 @@ public class NewGoalActivity extends AppCompatActivity {
         Button confirmBtn = findViewById(R.id.confirmButton);
         Button cancelBtn = findViewById(R.id.cancelButton);
 
+
+        ArrayAdapter<String> itemsAdapter = GetExistingCategoryList();
+        m_CategoryField.setAdapter(itemsAdapter);
+
         cancelBtn.setOnClickListener(v -> finish());
 
         confirmBtn.setOnClickListener(v -> {
             Data a_Goal = GetNewGoal();
-            m_PlansRef.child(a_Goal.getId()).setValue(a_Goal).addOnCompleteListener(task -> {
+            m_PlansRef.child(a_Goal.getGoal()).setValue(a_Goal).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     Log.d(TAG, "AddGoal: success");
                     Toast.makeText(getApplicationContext(),"New Goal added successfully", Toast.LENGTH_SHORT).show();
@@ -192,6 +198,11 @@ public class NewGoalActivity extends AppCompatActivity {
         Util.CheckForNullEntry(amount,m_BudgetField);
         return Double.parseDouble(amount);
     }/* String NewGoalActivity::GetBudget(); */
+
+    private ArrayAdapter<String> GetExistingCategoryList(){
+        List<String> items=Util.GetExistingCategories();
+        return new ArrayAdapter<>(this, R.layout.list_item, R.id.category_items, items);
+    }
 
     private EditText m_GoalName;
     private AutoCompleteTextView m_CategoryField;

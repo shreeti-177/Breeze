@@ -10,7 +10,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="40dp"
         android:orientation="vertical">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar"
@@ -24,18 +23,17 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="10dp"
-            app:cardCornerRadius="20dp">
+            app:cardElevation="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            app:cardCornerRadius="10dp">
             <TextView
                 android:id="@+id/budgetMonth"
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_margin="10dp"
                 android:text="Budget Month: "
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:textStyle="bold"
@@ -45,19 +43,19 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="20dp">
+            app:cardElevation="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="10dp">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/categorySection"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
                     android:id="@+id/categoriesText"
-                    android:layout_margin="20dp"
+                    android:layout_margin="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/TextAppearance.AppCompat.Medium"
@@ -70,7 +68,6 @@
                     android:id="@+id/Apparel"
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="Apparel"
                     app:layout_constraintTop_toBottomOf="@id/categoriesText"
@@ -81,7 +78,6 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Community"
                     app:layout_constraintStart_toEndOf="@id/Apparel"
                     app:layout_constraintTop_toBottomOf="@id/categoriesText"
@@ -92,18 +88,17 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Education"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/Apparel"
                     app:layout_constraintEnd_toStartOf="@id/Food"/>
+
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/Food"
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Food"
                     app:layout_constraintStart_toEndOf="@id/Education"
                     app:layout_constraintTop_toBottomOf="@id/Community"
@@ -114,7 +109,6 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Healthcare"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/Education"
@@ -124,7 +118,6 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Merchandise"
                     app:layout_constraintStart_toEndOf="@id/Healthcare"
                     app:layout_constraintTop_toBottomOf="@id/Food"
@@ -135,7 +128,6 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Miscellaneous"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/Healthcare"
@@ -145,7 +137,6 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Payments"
                     app:layout_constraintStart_toEndOf="@id/Miscellaneous"
                     app:layout_constraintTop_toBottomOf="@id/Merchandise"
@@ -155,7 +146,6 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Recreation"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/Miscellaneous"
@@ -165,7 +155,6 @@
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Travel"
                     app:layout_constraintStart_toEndOf="@id/Recreation"
                     app:layout_constraintTop_toBottomOf="@id/Payments"
@@ -175,16 +164,17 @@
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardElevation="20dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="20dp">
-        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_height="match_parent"
+            app:cardElevation="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="10dp">
+        <LinearLayout
             android:id="@+id/budgetSection"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
         <TextView
             android:id="@+id/totalBudget"
             android:layout_width="match_parent"
@@ -193,21 +183,13 @@
             android:textStyle="bold"
             android:layout_margin="10dp"
             android:textColor="@color/black"
-            android:text="Monthly Budget"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
+            android:text="Monthly Budget"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
-                android:layout_width="319dp"
-                android:layout_height="173dp"
-                android:layout_margin="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/totalBudget" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

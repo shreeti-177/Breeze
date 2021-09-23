@@ -22,6 +22,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class RegisterActivity extends AppCompatActivity {
     @Override
@@ -51,13 +57,12 @@ public class RegisterActivity extends AppCompatActivity {
     */
     /**/
     private void SetRegistrationDetails(){
-        EditText m_FirstName = findViewById(R.id.firstNameField);
-        EditText m_LastName = findViewById(R.id.lastNameField);
-        m_UserName=m_FirstName.getText().toString().trim()+" " + m_LastName.getText().toString().trim();
+        m_FirstName = findViewById(R.id.firstNameField);
+        m_LastName = findViewById(R.id.lastNameField);
         m_NewUserEmail=findViewById(R.id.emailField);
         m_NewUserPassword=findViewById(R.id.passwordField);
         m_ConfirmUserPassword=findViewById(R.id.confirmPasswordField);
-        Button m_SignUpBtn = findViewById(R.id.signUpBtn);
+        m_SignUpBtn = findViewById(R.id.signUpBtn);
         TextView m_SignInLink = findViewById(R.id.signInLink);
         m_ProgressBar=findViewById(R.id.progress_log);
         m_Auth= FirebaseAuth.getInstance();
@@ -90,6 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void RegistrationButtonClicked(){
         String userEmail=GetUserEmail();
         String userPassword=GetUserPassword();
+        m_UserName=m_FirstName.getText().toString().trim()+" " + m_LastName.getText().toString().trim();
         m_ProgressBar.setVisibility(View.VISIBLE);
         RegisterWithFirebase(userEmail,userPassword);
     }/* private void RegistrationButtonClicked() */
@@ -198,6 +204,7 @@ public class RegisterActivity extends AppCompatActivity {
         if(!(userEmail.contains("@"))){
             m_NewUserEmail.setError("Invalid Email Address");
             m_NewUserEmail.requestFocus();
+            m_SignUpBtn.setClickable(false);
         }
         return userEmail;
     }/* private String GetUserEmail() */
@@ -240,6 +247,7 @@ public class RegisterActivity extends AppCompatActivity {
             m_NewUserPassword.setError("Passwords do not match");
             m_ConfirmUserPassword.setError("Passwords do not match");
             m_NewUserPassword.requestFocus();
+
         }
         return userPassword;
     }/* private String GetUserPassword() */
@@ -274,12 +282,17 @@ public class RegisterActivity extends AppCompatActivity {
     }/* private void CheckForNullEntry(String a_TextEntry, EditText a_TextField) */
 
 
+
     private EditText m_NewUserEmail;
     private EditText m_NewUserPassword;
     private EditText m_ConfirmUserPassword;
+    private EditText m_FirstName;
+    private EditText m_LastName;
     private FirebaseAuth m_Auth;
     private String m_UserName;
+    private Button m_SignUpBtn;
     private ProgressBar m_ProgressBar;
     private static final String TAG = "RegistrationActivity";
+
 
 }

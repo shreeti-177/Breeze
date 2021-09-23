@@ -53,7 +53,7 @@ public class Util {
     public static int getCurrentDay(){
         MutableDateTime epoch = new MutableDateTime();
         epoch.setDate(0);
-        DateTime now = new DateTime().minusMonths(1).withDayOfMonth(30);
+        DateTime now = new DateTime();
         Days day = Days.daysBetween(epoch,now);
         Log.i("Days",String.valueOf(day.getDays()));
         return day.getDays();
@@ -153,6 +153,10 @@ public class Util {
 
     public static DatabaseReference GetExpenseReference(){
         return FirebaseDatabase.getInstance().getReference().child("expenses").child(m_Uid);
+    }
+
+    public static DatabaseReference GetPlansReference(){
+        return FirebaseDatabase.getInstance().getReference().child("plans").child(m_Uid);
     }
     public static String getUid() {
         return m_Uid;

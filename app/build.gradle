@@ -17,6 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
 
+//        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "PLAID_CLIENT_KEY", apikeyProperties['PLAID_CLIENT_KEY'])
         buildConfigField("String", "PLAID_CLIENT_SECRET", apikeyProperties['PLAID_CLIENT_SECRET'])
@@ -41,6 +42,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -76,5 +78,7 @@ dependencies {
     // https://mvnrepository.com/artifact/joda-time/joda-time
     implementation 'joda-time:joda-time:2.10.10'
 
+    implementation 'com.squareup.picasso:picasso:2.71828'
+//    implementation 'com.android.support:multidex:1.0.3'
 
 }

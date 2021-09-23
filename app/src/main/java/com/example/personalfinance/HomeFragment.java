@@ -13,12 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,6 +77,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        BackgroundTasks.UpdateOnlineTransactions();
 
         //Inflate the layout for this fragment
         m_RootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -209,7 +215,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 //If no summaries till date, don't load dashboard
-                if(m_SummaryList.size()==0){
+                if(m_SummaryList.size()<2){
                     Log.i("No chart data","No summaries to show");
                     chart.setNoDataText("No Expenses till date!");
                     return;

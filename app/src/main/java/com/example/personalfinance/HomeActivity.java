@@ -5,16 +5,23 @@ package com.example.personalfinance;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class HomeActivity extends AppCompatActivity{
-    private BackgroundTasks t=new BackgroundTasks();
+public class HomeActivity extends OnboardActivity{
 
     /**/
     /*
@@ -45,11 +52,18 @@ public class HomeActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Util.m_Executor.execute(()->
-                        t.UpdateOnlineTransactions()
-        );
+
+        BackgroundTasks.UpdateOnlineTransactions();
         //On creating activity, set base layout
         setContentView(R.layout.activity_base_home);
+
+        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        m_Executor.execute(()->{
+            BackgroundTasks.UpdateOnlineTransactions();
+        });
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         BottomNavigationView m_BottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -90,6 +104,28 @@ public class HomeActivity extends AppCompatActivity{
 
     } /*protected void onCreate(Bundle savedInstanceState)*/
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater =getMenuInflater();
+        inflater.inflate(R.menu.top_app_bar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.profile:
+                startActivity(new Intent(this, UserProfile.class));
+                return true;
+            case R.id.logOut:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this,LoginActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 
     //Create new fragment instance for each navigation button
     private final HomeFragment HomePageFragment = new HomeFragment();

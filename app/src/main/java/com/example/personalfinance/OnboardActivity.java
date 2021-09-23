@@ -125,46 +125,15 @@ public class OnboardActivity extends AppCompatActivity {
             try {
                 GetAccessToken();
                 StoreAccessToken();
-                GetAllCategories();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
         finishActivity(requestCode);
+
         startActivity(new Intent(this, HomeActivity.class));
     }
 
-    private void GetAllCategories() throws IOException {
-        Response<CategoriesGetResponse> response = client().categoriesGet(new Object()).execute();
-        assert response.body() != null;
-        List<Category> allCategories = response.body().getCategories();
-        Log.i("Categories",String.valueOf(allCategories));
-        m_GeneralCategories = new HashMap<>();
-        for (Category c:allCategories) {
-            if (c.getHierarchy().size() == 1) {
-                String general = c.getHierarchy().get(0);
-                if (!m_GeneralCategories.containsValue(general)) {
-                    m_GeneralCategories.put(c.getCategoryId(), general);
-                }
-            }
-        }
-        Log.i(TAG, String.valueOf(m_GeneralCategories));
-        Log.i(TAG, "===============================");
-        m_CloudStore.collection("categories").document("general").set(m_GeneralCategories)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull @NotNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
-
-    }
 
     private void StoreAccessToken(){
 
@@ -185,7 +154,7 @@ public class OnboardActivity extends AppCompatActivity {
         });
     }
 
-    private void GetAccessToken() throws IOException{
+    public void GetAccessToken() throws IOException{
         ItemPublicTokenExchangeRequest request = new ItemPublicTokenExchangeRequest()
                 .publicToken(publicToken());
         Response<ItemPublicTokenExchangeResponse> response = client()
@@ -213,7 +182,7 @@ public class OnboardActivity extends AppCompatActivity {
                 .language("en")
                 .webhook("https://webhook.example.com")
                 .linkCustomizationName("default")
-                .androidPackageName("com.example.personalfinanceapp")
+                .androidPackageName("com.example.personalfinance")
                 .accountFilters(accountFilters);
 
         Response<LinkTokenCreateResponse> response=client()
@@ -245,7 +214,7 @@ public class OnboardActivity extends AppCompatActivity {
     ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     private String m_PublicToken;
     protected PlaidApi m_PlaidClient;
-    private String m_AccessToken;
+    protected String m_AccessToken;
     private String m_Token;
     FirebaseUser m_CurrentUser = FirebaseAuth.getInstance().getCurrentUser();
     private Map<String, String> m_GeneralCategories;

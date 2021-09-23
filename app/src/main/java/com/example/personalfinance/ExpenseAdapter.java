@@ -105,7 +105,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             holder.greenAlert.setColorFilter(Color.parseColor("#00FF00"));
         }
         else if(value>(0.5*budget) && value <= (0.75*budget)){
-            holder.greenAlert.setColorFilter(Color.parseColor("#00FF00"));
+            holder.greenAlert.setColorFilter(Color.YELLOW);
             holder.yellowAlert.setColorFilter(Color.YELLOW);
         }
         else{

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,8 @@ import java.util.Calendar;
 
 import java.util.Objects;
 
+import static android.view.View.GONE;
+
 public class BudgetActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class BudgetActivity extends AppCompatActivity {
         String month = date.toString("MMM-yyyy");
         budgetMonth.setText("Budget Month: " + month);
 
+        budgetSection = findViewById(R.id.budgetSection);
 
 
         RecyclerView m_RecyclerView = findViewById(R.id.recyclerView);
@@ -93,6 +97,11 @@ public class BudgetActivity extends AppCompatActivity {
                     }
                 }
                 Double finalTotal = total;
+                if(finalTotal==0){
+                    budgetSection.setVisibility(GONE);
+                }else{
+                    budgetSection.setVisibility(View.VISIBLE);
+                }
                 Util.m_Executor.execute(()-> BackgroundTasks.StoreBudgetSummary(finalTotal));
             }
 
@@ -164,6 +173,7 @@ public class BudgetActivity extends AppCompatActivity {
                     //disable the button once budget is set for a category
                     savePreferences(a_Category.getText().toString(), "true");
                     a_Category.setEnabled(false);
+                    budgetSection.setVisibility(View.VISIBLE);
                     dialog.dismiss();
                 } else {
                     Log.w(TAG, "SetCategoryBudget: failure", task.getException());
@@ -235,7 +245,7 @@ public class BudgetActivity extends AppCompatActivity {
     private Button Recreation;
     private Button Travel;
     private AutoCompleteTextView m_CategoryField;
-
+    private LinearLayout budgetSection;
     private View m_View;
     private BudgetAdapter m_Adapter;
     private final static String TAG = "BudgetActivity";

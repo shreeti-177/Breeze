@@ -26,8 +26,8 @@ public class PlansAdapter extends FirebaseRecyclerAdapter<Data, PlansAdapter.Goa
 //        Log.i("Model Data",String.valueOf(model.getGoal()));
 //        Log.i("Model Data Budget",String.valueOf(model.getGoalBudget()));
 
-        holder.SetGoalName("Category Name: " + model.getGoal());
-        holder.SetGoalBudget("Allocated Category Budget: $" + model.getGoalBudget());
+        holder.SetGoalName("Goal Name: " + model.getGoal());
+        holder.SetGoalBudget("Goal Budget: $" + model.getGoalBudget());
 //                holder.ShowOptions();
 
     }

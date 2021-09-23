@@ -94,6 +94,7 @@ public class CashTransactionActivity extends AppCompatActivity {
 
         String expenseId = Util.GetExpenseReference().push().getKey();
         String dateText = m_DateField.getText().toString().trim();
+        Util.CheckForNullEntry(dateText,m_DateField);
 
         SimpleDateFormat currentFormat = new SimpleDateFormat("MMM dd, yyyy");
         Date objectDate = currentFormat.parse(dateText);

@@ -3,6 +3,7 @@ package com.example.personalfinance;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,8 +35,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Response;
 
-public class BackgroundTasks extends OnboardActivity{
+public class BackgroundTasks extends AppCompatActivity {
     BackgroundTasks(){}
+
 
     static public void StoreExpenseSummary(Double a_TotalExpense){
         Util.GetSummaryReference().child("expense").setValue(a_TotalExpense)
@@ -59,20 +61,14 @@ public class BackgroundTasks extends OnboardActivity{
                 });
     }
 
-    public void UpdateOnlineTransactions(){
+    static public void UpdateOnlineTransactions(){
         Util.m_Executor.execute(()->{
             GetAccessToken();
-//            FetchTransactions(m_AccessToken);
-            try {
-                AddTransactionsToDatabase();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
         });
     }
 
-    public void GetAccessToken(){
-        m_BaseDataRef.child("accessToken").addListenerForSingleValueEvent(new ValueEventListener() {
+    public static void GetAccessToken(){
+        m_BaseDataRef.child("access-token").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 m_AccessToken = String.valueOf(snapshot.getValue());
@@ -80,19 +76,11 @@ public class BackgroundTasks extends OnboardActivity{
                 Util.m_Executor.execute(()->{
                     try {
                         FetchTransactions(m_AccessToken);
-                    } catch (IOException e) {
+                        AddTransactionsToDatabase();
+                    } catch (IOException | ParseException e) {
                         e.printStackTrace();
                     }
                 });
-
-//                Util.m_Executor.execute(() -> {
-//                    try {
-//                        FetchTransactions(accessToken);
-//                        AddTransactionsToDatabase();
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
             }
 
             @Override
@@ -165,7 +153,7 @@ public class BackgroundTasks extends OnboardActivity{
         return a_Expense;
     }
 
-    public void FetchTransactions(String a_AccessToken) throws IOException {
+    public static void FetchTransactions(String a_AccessToken) throws IOException {
         LocalDate startDate = LocalDate.now().minusYears(2);
 //        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
 //        LocalDate endDate = LocalDate.now().minusMonths(1).withDayOfMonth(31);
@@ -178,15 +166,15 @@ public class BackgroundTasks extends OnboardActivity{
 
         Log.i("Request",String.valueOf(request));
         m_OnlineTransactions = new ArrayList<>();
-        Response<TransactionsGetResponse> apiResponse = client().transactionsGet(request).execute();
-        for (int i = 0; i < 10; i++) {
-            apiResponse=(client().transactionsGet(request).execute());
+        Response<TransactionsGetResponse> apiResponse = null;
+        for (int i = 0; i < 5; i++) {
+            apiResponse=(Util.PlaidClient().transactionsGet(request).execute());
             if (apiResponse.isSuccessful()) {
                 break;
             } else {
                 Log.i("Transaction","Not ready");
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                 } catch (Exception e) {
                     Log.i("Error retrieving transactions",e.getMessage());
                 }
@@ -195,34 +183,11 @@ public class BackgroundTasks extends OnboardActivity{
         TransactionsGetResponse transactionResponse = apiResponse.body();
         Log.i("Api response",String.valueOf(apiResponse.body()));
 
+        assert apiResponse.body() != null;
         Log.i("Total Number of Transactions",String.valueOf(apiResponse.body().getTotalTransactions()));
         m_OnlineTransactions.addAll(apiResponse.body().getTransactions());
-
-
-//        for (int i = 0; i < 10; i++) {
-//            try {
-//                PlaidApi a_Client = Util.PlaidClient();
-//                apiResponse = a_Client.transactionsGet(request).execute();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            if (apiResponse.isSuccessful()) {
-//                Log.i("Success","It's successful");
-//                break;
-//            } else {
-//                try {
-//                    Log.i("Transaction", "Not ready");
-//                    Thread.sleep(5000);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//        assert apiResponse.body() != null;
-//        Log.i("Total Number of Transactions",String.valueOf(apiResponse.body().getTotalTransactions()));
-//        m_OnlineTransactions.addAll(apiResponse.body().getTransactions());
     }
+
     private static DatabaseReference m_BaseDataRef = FirebaseDatabase.getInstance().getReference()
             .child("base-data").child(Util.getUid());
     public static List<Transaction> m_OnlineTransactions=new ArrayList<>();

@@ -40,7 +40,19 @@
     <string name="delete">Delete</string>
 
     <string name="new_goal">Add a New Goal</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="khanAcademy_blob">
+        These videos do a good job of introducing personal finance ideas, but they also dig deeper
+        into the finance beyond the personal.
+    </string>
+
+    <string name="cnnMoney_blob">
+        Money 101 presents the basics of personal finance as a series of lessons that you can go through, one at a time.
+    </string>
+
+    <string name="yahoo_blob">
+        If you want to know exactly what debt means or want to learn how to buy a bond and you prefer the written word, this is the premier place to go.
+    </string>
+
 
 </resources>
