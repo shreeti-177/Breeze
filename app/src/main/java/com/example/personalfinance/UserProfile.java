@@ -1,11 +1,13 @@
 package com.example.personalfinance;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -15,12 +17,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,10 +60,11 @@ public class UserProfile extends AppCompatActivity {
         Button m_Save = findViewById(R.id.saveButton);
         Button m_Cancel = findViewById(R.id.cancelButton);
 
-        FirebaseUser user = m_Auth.getCurrentUser();
-        uId = user.getUid();
+        currentUser = m_Auth.getCurrentUser();
+        uId = currentUser.getUid();
 
-        DocumentReference documentReference = firestore.collection("users").document(uId);
+        DocumentReference documentReference = m_Firestore.collection("users").document(uId);
+        m_StorageReference=FirebaseStorage.getInstance().getReference();
 
         databaseReference = database.getReference("users");
 
@@ -67,15 +75,41 @@ public class UserProfile extends AppCompatActivity {
             }
         });
 
-//        m_Image.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.setType("image/*");
-//                intent.setAction(Intent.ACTION_GET_CONTENT);
-//                startActivity(intent);
-//            }
-//        });
+        StorageReference profileReference = m_StorageReference.child("users/" + m_Auth.getCurrentUser().getUid()+ "profile.jpg");
+
+        profileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(m_Image);
+            }
+        });
+
+        ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // There are no request codes
+                            Intent data = result.getData();
+                            Uri imageUri = data.getData();
+                            UploadImagetoFirebase(imageUri);
+
+                        }
+                    }
+                });
+
+
+        m_Image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent openGalleyIntent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                someActivityResultLauncher.launch(openGalleyIntent);
+            }
+        });
+
+
 
         m_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,42 +125,50 @@ public class UserProfile extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void UploadImagetoFirebase(Uri a_ImageUri){
 
-    }
-
-    private String getFileExt(Uri a_Uri){
-        ContentResolver contentResolver = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(a_Uri));
+        StorageReference fileReference = m_StorageReference.child("users/" + m_Auth.getCurrentUser().getUid()+ "profile.jpg");
+        fileReference.putFile(a_ImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(m_Image);
+                    }
+                });
+//                Toast.makeText(getApplicationContext(), "Image Uploaded", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Image Upload Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void UploadData(){
         String name = m_Auth.getCurrentUser().getDisplayName();
         String firstName = m_FirstName.getText().toString();
         String lastName = m_LastName.getText().toString();
-        String email = m_Email.getText().toString();
+        String userEmail = m_Email.getText().toString();
 
-        if(!TextUtils.isEmpty(name) || !TextUtils.isEmpty(firstName) ||!TextUtils.isEmpty(lastName)||!TextUtils.isEmpty(email) ) {
+        if(!TextUtils.isEmpty(firstName) ||!TextUtils.isEmpty(lastName)||!TextUtils.isEmpty(userEmail) ) {
             Map<String, String> profile = new HashMap<>();
-            profile.put("name", name);
-            profile.put("email", email);
-            profile.put("privacy", "Public");
 
-            m_NewUser.SetFullName(name);
-            m_NewUser.SetEmail(email);
-            m_NewUser.SetUid(uId);
+            DocumentReference documentReference =m_Firestore.collection("users")
+                    .document(currentUser.getUid());
+            Map<String, Object> user = new HashMap<>();
+            user.put("firstName",firstName);
+            user.put("lastName",lastName);
+            user.put("Email", userEmail);
 
-            databaseReference.child(uId).setValue(m_NewUser);
-            m_DocumentReference.set(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
+            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
-                                Toast.makeText(getApplicationContext(), "Profile Saved!", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        });
+                    Log.d(TAG, "User profile updated for "+currentUser.getUid());
+                }
+            });
         }
         else{
             Log.e("Exception","Empty Field");
@@ -138,8 +180,9 @@ public class UserProfile extends AppCompatActivity {
     private static final int PICK_IMAGE =1;
     private User m_NewUser;
     private FirebaseAuth m_Auth = FirebaseAuth.getInstance();
-
+    FirebaseUser currentUser;
     private String uId;
+
     private Uri m_ImageUri;
     private  ImageView m_Image;
     private EditText m_FirstName;
@@ -147,7 +190,8 @@ public class UserProfile extends AppCompatActivity {
     private EditText m_Email;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference;
-    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    private StorageReference storageReference;
+    private FirebaseFirestore m_Firestore = FirebaseFirestore.getInstance();
+    private StorageReference m_StorageReference;
     private DocumentReference m_DocumentReference;
+    private static final String TAG = "UserProfile";
 }

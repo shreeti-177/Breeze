@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +29,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.CheckForNull;
 
@@ -68,6 +72,7 @@ public class RegisterActivity extends AppCompatActivity {
         TextView m_SignInLink = findViewById(R.id.signInLink);
         m_ProgressBar=findViewById(R.id.progress_log);
         m_Auth= FirebaseAuth.getInstance();
+        m_Firestore=FirebaseFirestore.getInstance();
 //        m_Database=FirebaseDatabase.getInstance().getReference();
 
         m_SignUpBtn.setOnClickListener(v -> RegistrationButtonClicked());
@@ -96,10 +101,10 @@ public class RegisterActivity extends AppCompatActivity {
     */
     /**/
     private void RegistrationButtonClicked(){
-        String firstName = GetString(m_FirstName);
-        String lastName = GetString(m_LastName);
-        String fullName = firstName + " " + lastName;
-        String userEmail=GetString(m_NewUserEmail);
+        firstName = GetString(m_FirstName);
+        lastName = GetString(m_LastName);
+        m_FullName = firstName + " " + lastName;
+        userEmail=GetString(m_NewUserEmail);
         String userPassword=GetString(m_NewUserPassword);
         String userConfirmPassword=GetString(m_ConfirmUserPassword);
         if(ValidateInputs(userEmail,userPassword,userConfirmPassword)){
@@ -140,6 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
         m_Auth.createUserWithEmailAndPassword(a_UserEmail,a_UserPassword).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()){
                 Log.d(TAG, "CreateUserWithEmail: success");
+
                 SetUserProfile();
                 Toast.makeText(getApplicationContext(), "Registration Successful!", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(), OnboardActivity.class));
@@ -172,8 +178,21 @@ public class RegisterActivity extends AppCompatActivity {
     */
     /**/
     private void SetUserProfile(){
-        FirebaseUser currentUser = m_Auth.getCurrentUser();
 
+        FirebaseUser currentUser = m_Auth.getCurrentUser();
+        DocumentReference documentReference =m_Firestore.collection("users")
+                .document(currentUser.getUid());
+        Map<String, Object> user = new HashMap<>();
+        user.put("firstName",firstName);
+        user.put("lastName",lastName);
+        user.put("Email", userEmail);
+
+        documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d(TAG, "User profile created for "+currentUser.getUid());
+            }
+        });
 //        String keyId = m_Database.push().getKey();
 //        m_Database.child("users").child(keyId).setValue(m_User);
 
@@ -181,7 +200,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .setDisplayName(m_UserName)
 //                        .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                 .build();
-
+//
         currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d(TAG, "User profile updated.");
@@ -284,8 +303,13 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText m_FirstName;
     private EditText m_LastName;
     private FirebaseAuth m_Auth;
+    private FirebaseFirestore m_Firestore;
 //    private DatabaseReference m_Database;
 //    public User m_User;
+    private String m_FullName;
+    private String userEmail;
+    private String firstName;
+    private String lastName;
     private String m_UserName;
     private Button m_SignUpBtn;
     private ProgressBar m_ProgressBar;

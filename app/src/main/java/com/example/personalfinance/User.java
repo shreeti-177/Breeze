@@ -41,33 +41,6 @@ public class User {
         Uid = uid;
     }
 
-//    public User(String accessToken) {
-//        this.accessToken = accessToken;
-//    }
-//    public String getAccessToken() {
-//        return accessToken;
-//    }
-//
-//    public void setAccessToken(String accessToken) {
-//        this.accessToken = accessToken;
-//    }
-//
-//    public String GetFirstName() {
-//        return firstName;
-//    }
-//
-//    public void SetFirstName(String firstName) {
-//        this.firstName = firstName;
-//    }
-
-//    public String GetLastName() {
-//        return lastName;
-//    }
-
-//    public void SetLastName(String lastName) {
-//        this.lastName = lastName;
-//    }
-
 //    public String GetUrl() {
 //        return url;
 //    }

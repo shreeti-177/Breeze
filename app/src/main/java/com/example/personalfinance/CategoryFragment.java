@@ -66,7 +66,6 @@ public class CategoryFragment extends Fragment {
                     assert data != null;
                     totalMonthlyExpense+=data.getAmount();
                 }
-                m_Executor.execute(()-> BackgroundTasks.StoreExpenseSummary(totalMonthlyExpense));
                 CategoryChart categoryChart = new CategoryChart(pieChart);
                 categoryChart.SetUpPieChart();
                 categoryChart.LoadPieChart(monthlyDataList);

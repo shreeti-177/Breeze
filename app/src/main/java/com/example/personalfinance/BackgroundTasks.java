@@ -125,27 +125,6 @@ public class BackgroundTasks extends AppCompatActivity {
     }
 
 
-
-//    public static void FetchExistingSummaries() {
-//        for(int month: expenseSummary.keySet()){
-//            FirebaseDatabase.getInstance().getReference().child("summary").child(Util.getUid())
-//                    .child(String.valueOf(month)).child("expense")
-//                    .addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                        Double prevVal = (Double) dataSnapshot.getValue();
-//                        Double newVal = expenseSummary.get(month)+prevVal;
-//                        expenseSummary.put(month, newVal);
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull @NotNull DatabaseError error) {}
-//                });
-//        }
-//    }
-
     public static void UpdateSummaries(){
         for(int month:expenseSummary.keySet()){
 
@@ -155,9 +134,7 @@ public class BackgroundTasks extends AppCompatActivity {
             a_Epoch.setDate(0);
             a_Epoch.addMonths(month+1);
 
-//            DateTime date = new DateTime();
             String currentMonth = a_Epoch.toString("MMM-yyyy");
-            Log.i("HEre month", currentMonth);
             Summary summary = new Summary(currentMonth, month, expenseSummary.get(month));
 
             FirebaseDatabase.getInstance().getReference().child("summary").child(Util.getUid())
@@ -173,19 +150,9 @@ public class BackgroundTasks extends AppCompatActivity {
     }
 
     public static void AddTransactionsToDatabase() throws ParseException {
-//        expenseSummary.clear();
 
         for(Transaction t: m_OnlineTransactions) {
             Data a_Expense = CreateExpenseObject(t);
-//            if(t.getAmount()>0){
-//                if (!expenseSummary.containsKey(a_Expense.getMonth())) {
-//                    expenseSummary.put(a_Expense.getMonth(), 0.0);
-//                }
-//                Double prevVal = expenseSummary.get(a_Expense.getMonth());
-//                Double newVal = a_Expense.getAmount() + prevVal;
-//                expenseSummary.put(a_Expense.getMonth(), newVal);
-//            }
-
             Util.GetExpenseReference().child(a_Expense.getId()).setValue(a_Expense).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "AddTransaction: success");
@@ -240,7 +207,6 @@ public class BackgroundTasks extends AppCompatActivity {
         Days a_Day = Days.daysBetween(a_Epoch,a_now);
 
         Data a_Expense = new Data(expenseId, categoryName, merchant, amount, a_Date, a_Month.getMonths(), a_Day.getDays(), note);
-//        a_Expense.setDateTime(new DateTime(a_ObjectDate));
         a_dateTime=new DateTime(a_ObjectDate);
 
         return a_Expense;
@@ -248,8 +214,6 @@ public class BackgroundTasks extends AppCompatActivity {
 
     public static void FetchTransactions(String a_AccessToken) throws IOException {
         LocalDate startDate = LocalDate.now().minusYears(2);
-//        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-//        LocalDate endDate = LocalDate.now().minusMonths(1).withDayOfMonth(31);
         LocalDate endDate=LocalDate.now();
 
         TransactionsGetRequest request = new TransactionsGetRequest()
