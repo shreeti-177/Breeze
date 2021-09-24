@@ -57,13 +57,15 @@ public class HomeActivity extends OnboardActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_home);
-        m_ProgressBar=findViewById(R.id.loading);
-        m_ProgressBar.setVisibility(View.VISIBLE);
+//        m_ProgressBar=findViewById(R.id.loading);
+//        m_ProgressBar.setVisibility(View.VISIBLE);
+        BackgroundTasks.UpdateOnlineTransactions();
+
 
         Handler handler = new Handler(Looper.myLooper());
         handler.postDelayed(()->{
             run();
-            m_ProgressBar.setVisibility(View.GONE);
+//            m_ProgressBar.setVisibility(View.GONE);
         },3000);
 
 
@@ -157,7 +159,7 @@ public class HomeActivity extends OnboardActivity{
 //    int m_PendingNotifications=Util.GetPendingNotifications();
 //    MenuItem m_MenuItem;
 
-    private ProgressBar m_ProgressBar;
+//    private ProgressBar m_ProgressBar;
     //Create new fragment instance for each navigation button
     private final HomeFragment HomePageFragment = new HomeFragment();
     private final CategoryFragment CategoryPageFragment = new CategoryFragment();

@@ -68,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
         TextView m_SignInLink = findViewById(R.id.signInLink);
         m_ProgressBar=findViewById(R.id.progress_log);
         m_Auth= FirebaseAuth.getInstance();
-        m_Database=FirebaseDatabase.getInstance().getReference();
+//        m_Database=FirebaseDatabase.getInstance().getReference();
 
         m_SignUpBtn.setOnClickListener(v -> RegistrationButtonClicked());
 
@@ -105,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
         if(ValidateInputs(userEmail,userPassword,userConfirmPassword)){
             m_UserName=m_FirstName.getText().toString().trim()+" " + m_LastName.getText().toString().trim();
             m_ProgressBar.setVisibility(View.VISIBLE);
-            m_User = new User(fullName, userEmail, userPassword);
+//            m_User = new User(fullName, userEmail, userPassword);
             RegisterWithFirebase(userEmail,userPassword);
         }
 
@@ -140,9 +140,10 @@ public class RegisterActivity extends AppCompatActivity {
         m_Auth.createUserWithEmailAndPassword(a_UserEmail,a_UserPassword).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()){
                 Log.d(TAG, "CreateUserWithEmail: success");
-                FirebaseUser currentUser = m_Auth.getCurrentUser();
-                SetUserProfile(currentUser);
+                SetUserProfile();
                 Toast.makeText(getApplicationContext(), "Registration Successful!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), OnboardActivity.class));
+
             }
             else{
                 Log.w(TAG, "CreateUserWithEmail: failure", task.getException());
@@ -170,22 +171,22 @@ public class RegisterActivity extends AppCompatActivity {
         08:00pm, 02/02/2021
     */
     /**/
-    private void SetUserProfile(FirebaseUser a_CurrentUser){
+    private void SetUserProfile(){
+        FirebaseUser currentUser = m_Auth.getCurrentUser();
 
-        String keyId = m_Database.push().getKey();
-        m_Database.child("users").child(keyId).setValue(m_User);
+//        String keyId = m_Database.push().getKey();
+//        m_Database.child("users").child(keyId).setValue(m_User);
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(m_UserName)
 //                        .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                 .build();
 
-        a_CurrentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+        currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d(TAG, "User profile updated.");
             }
         });
-        startActivity(new Intent(getApplicationContext(), OnboardActivity.class));
 
     }/* private void SetUserProfile() */
 
@@ -283,8 +284,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText m_FirstName;
     private EditText m_LastName;
     private FirebaseAuth m_Auth;
-    private DatabaseReference m_Database;
-    public User m_User;
+//    private DatabaseReference m_Database;
+//    public User m_User;
     private String m_UserName;
     private Button m_SignUpBtn;
     private ProgressBar m_ProgressBar;

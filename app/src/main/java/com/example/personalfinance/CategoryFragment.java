@@ -59,6 +59,7 @@ public class CategoryFragment extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                monthlyDataList.clear();
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
                     Data data = dataSnapshot.getValue(Data.class);
                     monthlyDataList.add(data);

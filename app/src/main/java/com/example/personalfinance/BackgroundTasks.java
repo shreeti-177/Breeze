@@ -80,8 +80,8 @@ public class BackgroundTasks extends AppCompatActivity {
                     try {
                         FetchTransactions(m_AccessToken);
                         AddTransactionsToDatabase();
-                        FetchExistingSummaries();
-                        UpdateSummaries();
+                        GetNewSummaries();
+//                        FetchExistingSummaries();
                         Log.i("Ends","Reaches here");
 
                     } catch (IOException | ParseException e) {
@@ -96,26 +96,55 @@ public class BackgroundTasks extends AppCompatActivity {
             }
         });
     }
-
-    public static void FetchExistingSummaries() {
-        for(int month: expenseSummary.keySet()){
-            FirebaseDatabase.getInstance().getReference().child("summary").child(Util.getUid())
-                    .child(String.valueOf(month)).child("expense")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Double prevVal = (Double) dataSnapshot.getValue();
-                        Double newVal = expenseSummary.get(month)+prevVal;
-                        expenseSummary.put(month, newVal);
+    public static void GetNewSummaries() {
+        expenseSummary.clear();
+        Util.GetExpenseReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Data data = dataSnapshot.getValue(Data.class);
+                    assert data != null;
+                    if(data.getAmount()<0) {
+                        continue;
                     }
+                    if (!expenseSummary.containsKey(data.getMonth())) {
+                    expenseSummary.put(data.getMonth(), 0.0);
+                    }
+                    Double prevVal = expenseSummary.get(data.getMonth());
+                    Double newVal = data.getAmount() + prevVal;
+                    expenseSummary.put(data.getMonth(), newVal);
                 }
+                UpdateSummaries();
+            }
 
-                @Override
-                public void onCancelled(@NonNull @NotNull DatabaseError error) {}
-                });
-        }
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
     }
+
+
+
+//    public static void FetchExistingSummaries() {
+//        for(int month: expenseSummary.keySet()){
+//            FirebaseDatabase.getInstance().getReference().child("summary").child(Util.getUid())
+//                    .child(String.valueOf(month)).child("expense")
+//                    .addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                        Double prevVal = (Double) dataSnapshot.getValue();
+//                        Double newVal = expenseSummary.get(month)+prevVal;
+//                        expenseSummary.put(month, newVal);
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull @NotNull DatabaseError error) {}
+//                });
+//        }
+//    }
 
     public static void UpdateSummaries(){
         for(int month:expenseSummary.keySet()){
@@ -141,23 +170,21 @@ public class BackgroundTasks extends AppCompatActivity {
                         }
                     });
         }
-        Log.i("Update summ","Reaches here");
     }
 
     public static void AddTransactionsToDatabase() throws ParseException {
-        expenseSummary.clear();
+//        expenseSummary.clear();
+
         for(Transaction t: m_OnlineTransactions) {
-            if(t.getAmount()<0){
-                continue;
-            }
             Data a_Expense = CreateExpenseObject(t);
-            if (!expenseSummary.containsKey(a_Expense.getMonth())) {
-                expenseSummary.put(a_Expense.getMonth(), 0.0);
-            }
-            Double prevVal = expenseSummary.get(a_Expense.getMonth());
-            Double newVal = a_Expense.getAmount() + prevVal;
-            expenseSummary.put(a_Expense.getMonth(), newVal);
-            Log.i("Pre summ","Reaches here");
+//            if(t.getAmount()>0){
+//                if (!expenseSummary.containsKey(a_Expense.getMonth())) {
+//                    expenseSummary.put(a_Expense.getMonth(), 0.0);
+//                }
+//                Double prevVal = expenseSummary.get(a_Expense.getMonth());
+//                Double newVal = a_Expense.getAmount() + prevVal;
+//                expenseSummary.put(a_Expense.getMonth(), newVal);
+//            }
 
             Util.GetExpenseReference().child(a_Expense.getId()).setValue(a_Expense).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
