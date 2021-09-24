@@ -20,10 +20,28 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
-import javax.annotation.CheckForNull;
-
 public class LoginActivity extends AppCompatActivity {
 
+    /**/
+    /*
+    * NAME
+        LoginActivity::onCreate() - Overrides the default onCreate function for the LoginActivity class
+
+    * SYNOPSIS
+        void LoginActivity::onCreate(Bundle savedInstanceState);
+        * savedInstanceState => previous state of the activity
+
+    * DESCRIPTION
+        This function will attempt to set the login layout page. Once it successfully does so, it adds
+        onclick listeners to get login details
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        10:27am, 02/04/2021
+    */
+    /**/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

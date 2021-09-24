@@ -4,7 +4,6 @@
 package com.example.personalfinance;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,28 +13,42 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.CheckForNull;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
+
+    /**/
+    /*
+    * NAME
+        RegisterActivity::onCreate() - Overrides the default onCreate function for RegisterActivity class
+
+    * SYNOPSIS
+        void MainActivity::onCreate(Bundle savedInstanceState);
+        * savedInstanceState => previous state of the activity
+
+    * DESCRIPTION
+        This function will be the first one to be called once the app is launched.
+        It will then attempt to call the login page, which is eventually what the user sees once the
+        app is launched.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        10:27am, 02/04/2021
+    */
+    /**/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
         m_NewUserEmail=findViewById(R.id.emailField);
         m_NewUserPassword=findViewById(R.id.passwordField);
         m_ConfirmUserPassword=findViewById(R.id.confirmPasswordField);
-        m_SignUpBtn = findViewById(R.id.signUpBtn);
+        Button m_SignUpBtn = findViewById(R.id.signUpBtn);
         TextView m_SignInLink = findViewById(R.id.signInLink);
         m_ProgressBar=findViewById(R.id.progress_log);
         m_Auth= FirebaseAuth.getInstance();
@@ -103,14 +116,13 @@ public class RegisterActivity extends AppCompatActivity {
     private void RegistrationButtonClicked(){
         firstName = GetString(m_FirstName);
         lastName = GetString(m_LastName);
-        m_FullName = firstName + " " + lastName;
+
         userEmail=GetString(m_NewUserEmail);
         String userPassword=GetString(m_NewUserPassword);
         String userConfirmPassword=GetString(m_ConfirmUserPassword);
         if(ValidateInputs(userEmail,userPassword,userConfirmPassword)){
             m_UserName=m_FirstName.getText().toString().trim()+" " + m_LastName.getText().toString().trim();
             m_ProgressBar.setVisibility(View.VISIBLE);
-//            m_User = new User(fullName, userEmail, userPassword);
             RegisterWithFirebase(userEmail,userPassword);
         }
 
@@ -153,7 +165,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
             else{
                 Log.w(TAG, "CreateUserWithEmail: failure", task.getException());
-                Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException())
+                        .getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }/* private void RegisterWithFirebase(String a_UserEmail, String a_UserPassword) */
@@ -180,6 +193,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void SetUserProfile(){
 
         FirebaseUser currentUser = m_Auth.getCurrentUser();
+        assert currentUser != null;
         DocumentReference documentReference =m_Firestore.collection("users")
                 .document(currentUser.getUid());
         Map<String, Object> user = new HashMap<>();
@@ -187,20 +201,14 @@ public class RegisterActivity extends AppCompatActivity {
         user.put("lastName",lastName);
         user.put("Email", userEmail);
 
-        documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.d(TAG, "User profile created for "+currentUser.getUid());
-            }
-        });
-//        String keyId = m_Database.push().getKey();
-//        m_Database.child("users").child(keyId).setValue(m_User);
+        documentReference.set(user).addOnSuccessListener(unused ->
+                Log.d(TAG, "User profile created for "+currentUser.getUid()));
+
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(m_UserName)
-//                        .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                 .build();
-//
+
         currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d(TAG, "User profile updated.");
@@ -304,14 +312,10 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText m_LastName;
     private FirebaseAuth m_Auth;
     private FirebaseFirestore m_Firestore;
-//    private DatabaseReference m_Database;
-//    public User m_User;
-    private String m_FullName;
     private String userEmail;
     private String firstName;
     private String lastName;
     private String m_UserName;
-    private Button m_SignUpBtn;
     private ProgressBar m_ProgressBar;
     private static final String TAG = "RegistrationActivity";
 

@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.plaid.internal.core.protos.link.workflow.nodes.panes.ButtonWithCardsPane;
-
 public class ResourceFragment extends Fragment {
 
     View m_RootView;
@@ -45,62 +43,17 @@ public class ResourceFragment extends Fragment {
         TextView resource2Txt = m_RootView.findViewById(R.id.cnnMoneyText);
         TextView resource3Txt = m_RootView.findViewById(R.id.yahooText);
 
-        resource1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://www.khanacademy.org/economics-finance-domain/core-finance");
-            }
-        });
+        resource1.setOnClickListener(v -> NavigateTo("https://www.khanacademy.org/economics-finance-domain/core-finance"));
+        resource1Img.setOnClickListener(v -> NavigateTo("https://www.khanacademy.org/economics-finance-domain/core-finance"));
+        resource1Txt.setOnClickListener(v -> NavigateTo("https://www.khanacademy.org/economics-finance-domain/core-finance"));
 
-        resource1Img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://www.khanacademy.org/economics-finance-domain/core-finance");
-            }
-        });
+        resource2.setOnClickListener(v -> NavigateTo("https://money.cnn.com/pf/money-essentials"));
+        resource2Img.setOnClickListener(v -> NavigateTo("https://money.cnn.com/pf/money-essentials"));
+        resource2Txt.setOnClickListener(v -> NavigateTo("https://money.cnn.com/pf/money-essentials"));
 
-        resource1Txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://www.khanacademy.org/economics-finance-domain/core-finance");
-            }
-        });
-        resource2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://money.cnn.com/pf/money-essentials");
-            }
-        });
-        resource2Img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://money.cnn.com/pf/money-essentials");
-            }
-        });
-        resource2Txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://money.cnn.com/pf/money-essentials");
-            }
-        });
-        resource3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://finance.yahoo.com/");
-            }
-        });
-        resource3Img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://finance.yahoo.com/");
-            }
-        });
-        resource3Txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigateTo("https://finance.yahoo.com/");
-            }
-        });
+        resource3.setOnClickListener(v -> NavigateTo("https://finance.yahoo.com/"));
+        resource3Img.setOnClickListener(v -> NavigateTo("https://finance.yahoo.com/"));
+        resource3Txt.setOnClickListener(v -> NavigateTo("https://finance.yahoo.com/"));
         return m_RootView;
     }
 

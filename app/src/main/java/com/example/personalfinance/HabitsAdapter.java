@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -63,7 +62,6 @@ public class HabitsAdapter extends RecyclerView.Adapter<HabitsAdapter.ReportView
 
     public static class ReportViewHolder extends RecyclerView.ViewHolder {
 
-        TextView a_SubText;
         View m_SubItem;
         ImageView m_Arrow;
 
@@ -71,7 +69,6 @@ public class HabitsAdapter extends RecyclerView.Adapter<HabitsAdapter.ReportView
             super(itemView);
             m_SubItem=itemView.findViewById(R.id.categoryReport);
             m_Arrow=itemView.findViewById(R.id.forwardArrow);
-//            a_SubText=itemView.findViewById(R.id.subText);
         }
         private void SetCategoryName(String a_CategoryName){
             TextView categoryName = itemView.findViewById(R.id.categoryName);

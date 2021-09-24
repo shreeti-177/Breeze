@@ -1,10 +1,6 @@
 package com.example.personalfinance;
 
-
-import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -13,7 +9,6 @@ import com.plaid.client.ApiClient;
 import com.plaid.client.request.PlaidApi;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 
@@ -28,13 +23,6 @@ import java.util.concurrent.Executors;
 public class Util {
 
 
-    public static void IncrementNotification(int a_Size){
-        m_PendingNotifications+=a_Size;
-    }
-
-    public static int GetPendingNotifications(){
-        return m_PendingNotifications;
-    }
     public static void CheckForNullEntry(String a_TextEntry, EditText a_TextField){
         if(a_TextEntry.isEmpty()){
             a_TextField.setError("Required Field");
@@ -45,32 +33,7 @@ public class Util {
         MutableDateTime a_Epoch = new MutableDateTime();
         a_Epoch.setDate(0);
         DateTime a_Now = new DateTime();
-        Months a_Month = Months.monthsBetween(a_Epoch, a_Now);
-        return a_Month;
-    }
-
-    public static int getFirstDay(){
-        MutableDateTime epoch = new MutableDateTime();
-        epoch.setDate(0);
-        DateTime now = new DateTime().minusMonths(1).withDayOfMonth(1);
-        Days day = Days.daysBetween(epoch,now);
-        return day.getDays();
-    }
-
-    public static int getCurrentDay(){
-        MutableDateTime epoch = new MutableDateTime();
-        epoch.setDate(0);
-        DateTime now = new DateTime();
-        Days day = Days.daysBetween(epoch,now);
-        Log.i("Days",String.valueOf(day.getDays()));
-        return day.getDays();
-    }
-
-    public static Months getTransactionMonth(DateTime a_date) {
-        MutableDateTime a_Epoch = new MutableDateTime();
-        a_Epoch.setDate(0);
-        Months a_Month = Months.monthsBetween(a_Epoch, a_date);
-        return a_Month;
+        return Months.monthsBetween(a_Epoch, a_Now);
     }
 
     public static PlaidApi PlaidClient(){
@@ -84,7 +47,8 @@ public class Util {
     }
 
     public static List<String> GetExistingCategories() {
-        List<String> basicCategories = new ArrayList<String>(){{
+
+        return new ArrayList<String>(){{
             add("Apparel");
             add("Community");
             add("Food");
@@ -96,8 +60,6 @@ public class Util {
             add("Recreation");
             add("Travel");
         }};
-
-        return basicCategories;
     }
 
     public static int SetCategoryIcon(String a_Category){
@@ -169,13 +131,8 @@ public class Util {
         return m_Uid;
     }
 
-    public static void setUid(String a_Uid) {
-        m_Uid = a_Uid;
-    }
-
-    private static int m_PendingNotifications = 0;
     public static ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     public static FirebaseAuth m_Auth = FirebaseAuth.getInstance();
-    private static String m_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
+    private static final String m_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();
 
 }

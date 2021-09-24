@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/home"
-        android:title="Home"
+        android:title="@string/home"
         android:icon="@drawable/ic_baseline_home_24" />
 
     <item
         android:id="@+id/categories"
-        android:title="Categories"
+        android:title="@string/categories"
         android:icon="@drawable/ic_baseline_pie_chart_24" />
 
     <item
         android:id="@+id/placeholder"
         android:checkable="false"
-        android:title="Cash Transactions"/>
+        android:title="@string/cash_transactions"/>
 
     <item
         android:id="@+id/habits"
-        android:title="Habits"
+        android:title="@string/habits"
         android:icon="@drawable/ic_baseline_analytics_24" />
 
     <item
         android:id="@+id/resources"
-        android:title="Resources"
+        android:title="@string/resources"
         android:icon="@drawable/ic_baseline_video_library_24" />
 </menu>

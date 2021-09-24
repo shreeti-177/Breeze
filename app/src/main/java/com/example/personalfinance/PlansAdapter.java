@@ -1,13 +1,11 @@
 package com.example.personalfinance;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -37,10 +35,10 @@ public class PlansAdapter extends FirebaseRecyclerAdapter<Data, PlansAdapter.Goa
     @Override
     public PlansAdapter.GoalViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         View a_View = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_retrieve_goals, parent, false);
-        return new PlansAdapter.GoalViewHolder(a_View);
+        return new GoalViewHolder(a_View);
     }
 
-    class GoalViewHolder extends RecyclerView.ViewHolder{
+    static class GoalViewHolder extends RecyclerView.ViewHolder{
         View m_View;
 
         public GoalViewHolder(@NonNull @NotNull View itemView) {

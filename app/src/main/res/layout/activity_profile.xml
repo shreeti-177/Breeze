@@ -34,7 +34,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_add_a_photo_24"/>
+                android:src="@drawable/ic_baseline_add_a_photo_24"
+                android:contentDescription="@string/profile_picture" />
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
@@ -44,7 +45,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pictureSection"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_weight="1"
                 android:layout_width="match_parent"
@@ -98,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="Cancel"
+            android:text="@string/cancel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/emailBox"
             app:layout_constraintEnd_toStartOf="@id/saveButton"/>
@@ -109,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="Save"
+            android:text="@string/save"
             app:layout_constraintStart_toEndOf="@id/cancelButton"
             app:layout_constraintTop_toBottomOf="@id/emailBox"
             app:layout_constraintEnd_toEndOf="parent"/>

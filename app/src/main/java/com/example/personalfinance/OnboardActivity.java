@@ -2,20 +2,14 @@ package com.example.personalfinance;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -23,8 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.plaid.client.ApiClient;
 import com.plaid.client.model.AccountSubtype;
-import com.plaid.client.model.CategoriesGetResponse;
-import com.plaid.client.model.Category;
 import com.plaid.client.model.CountryCode;
 import com.plaid.client.model.DepositoryFilter;
 import com.plaid.client.model.ItemPublicTokenExchangeRequest;
@@ -48,13 +40,11 @@ import com.plaid.link.result.LinkSuccessMetadata;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
-import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -75,19 +65,20 @@ public class OnboardActivity extends AppCompatActivity {
                     String accountMask = account.getMask();
                     LinkAccountSubtype accountSubtype = account.getSubtype();
                 }
-                String institutionId = metadata.getInstitution().getId();
+                String institutionId = Objects.requireNonNull(metadata.getInstitution()).getId();
                 String institutionName = metadata.getInstitution().getName();
 
                 return Unit.INSTANCE;
             },
             linkExit -> {
                 LinkError error = linkExit.getError();
+                assert error != null;
                 LinkErrorCode errorCode=error.getErrorCode();
                 String errorMessage = error.getErrorMessage();
                 String displayMessage = error.getDisplayMessage();
 
                 LinkExitMetadata metadata = linkExit.getMetadata();
-                String institutionId = metadata.getInstitution().getId();
+                String institutionId = Objects.requireNonNull(metadata.getInstitution()).getId();
                 String institutionName = metadata.getInstitution().getName();
                 String linkSessionId = metadata.getLinkSessionId();
                 String requestId = metadata.getRequestId();
@@ -108,21 +99,19 @@ public class OnboardActivity extends AppCompatActivity {
         m_CarouselView.setPageCount(m_Images.length);
         m_CarouselView.setImageListener(m_ImageListener);
         Button m_LinkAccount = findViewById(R.id.linkAccountBtn);
-        m_LinkAccount.setOnClickListener(v -> {
-            m_Executor.execute(()->{
-                try{
-                    m_Token = GetNewToken();
-                    LinkTokenConfiguration linkTokenConfiguration = new LinkTokenConfiguration.Builder()
-                            .token(m_Token)
-                            .build();
-                    PlaidHandler plaidHandler = Plaid.create(getApplication(), linkTokenConfiguration);
-                    plaidHandler.open(this);
-                }
-                catch(Exception e) {
-                    e.getStackTrace();
-                }
-            });
-        });
+        m_LinkAccount.setOnClickListener(v -> m_Executor.execute(()->{
+            try{
+                m_Token = GetNewToken();
+                LinkTokenConfiguration linkTokenConfiguration = new LinkTokenConfiguration.Builder()
+                        .token(m_Token)
+                        .build();
+                PlaidHandler plaidHandler = Plaid.create(getApplication(), linkTokenConfiguration);
+                plaidHandler.open(this);
+            }
+            catch(Exception e) {
+                e.getStackTrace();
+            }
+        }));
     }
 
     ImageListener m_ImageListener = new ImageListener() {
@@ -177,6 +166,7 @@ public class OnboardActivity extends AppCompatActivity {
         Response<ItemPublicTokenExchangeResponse> response = client()
                 .itemPublicTokenExchange(request)
                 .execute();
+        assert response.body() != null;
         m_AccessToken = response.body().getAccessToken();
     }
 
@@ -186,7 +176,7 @@ public class OnboardActivity extends AppCompatActivity {
         LinkTokenCreateRequestUser user = new LinkTokenCreateRequestUser().clientUserId(clientUserId);
 
         DepositoryFilter types = new DepositoryFilter()
-                .accountSubtypes(Arrays.asList(AccountSubtype.CHECKING));
+                .accountSubtypes(Collections.singletonList(AccountSubtype.CHECKING));
 
         LinkTokenAccountFilters accountFilters = new LinkTokenAccountFilters()
                 .depository(types);
@@ -237,7 +227,6 @@ public class OnboardActivity extends AppCompatActivity {
     private String m_Token;
     FirebaseUser m_CurrentUser = FirebaseAuth.getInstance().getCurrentUser();
     private Map<String, String> m_GeneralCategories;
-    FirebaseFirestore m_CloudStore = FirebaseFirestore.getInstance();
     private static final String TAG = "OnboardActivity";
 
 }

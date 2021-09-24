@@ -6,7 +6,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,10 +18,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class SavingActivity extends AppCompatActivity {
     @Override
@@ -43,8 +40,6 @@ public class SavingActivity extends AppCompatActivity {
         confirmBtn.setOnClickListener(v -> {
                     String goal = m_GoalField.getText().toString();
                     String amount = m_Amount.getText().toString();
-                    assert goal != null;
-                    assert amount != null;
 
                     Util.GetPlansReference().child(goal).child("savings").setValue(amount).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {

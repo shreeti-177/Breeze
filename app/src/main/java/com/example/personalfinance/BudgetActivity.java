@@ -49,7 +49,7 @@ public class BudgetActivity extends AppCompatActivity {
         TextView budgetMonth=findViewById(R.id.budgetMonth);
         DateTime date = new DateTime();
         String month = date.toString("MMM-yyyy");
-        budgetMonth.setText("Budget Month: " + month);
+        budgetMonth.setText(getString(R.string.budgetMonth) + month);
 
         budgetSection = findViewById(R.id.budgetSection);
 
@@ -171,7 +171,7 @@ public class BudgetActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Budget for this category set successfully",
                             Toast.LENGTH_SHORT).show();
                     //disable the button once budget is set for a category
-                    savePreferences(a_Category.getText().toString(), "true");
+                    savePreferences(a_Category.getText().toString());
                     a_Category.setEnabled(false);
                     budgetSection.setVisibility(View.VISIBLE);
                     dialog.dismiss();
@@ -186,11 +186,11 @@ public class BudgetActivity extends AppCompatActivity {
         cancelBtn.setOnClickListener(v -> dialog.dismiss());
     }
 
-    private void savePreferences(String key,String value) {
+    private void savePreferences(String key) {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(key,value);
+        editor.putString(key, "true");
         editor.apply();
     }
 

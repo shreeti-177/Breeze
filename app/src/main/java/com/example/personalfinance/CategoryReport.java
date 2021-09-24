@@ -4,7 +4,7 @@ import org.joda.time.Days;
 import org.joda.time.Months;
 
 public class CategoryReport {
-    private String m_Category;
+    private final String m_Category;
     private boolean m_Expanded;
 
     private Months m_CurrentMonth;

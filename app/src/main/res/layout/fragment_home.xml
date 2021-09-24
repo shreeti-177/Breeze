@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeFragment">
-
     <LinearLayout
         android:id="@+id/homeFragment"
         android:layout_width="match_parent"
@@ -33,7 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/base_margin"
-                android:src="@drawable/ic_baseline_person_24"/>
+                android:src="@drawable/ic_baseline_person_24"
+                android:contentDescription="@string/user_icon" />
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
                     style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:fontFamily="serif-monospace"
                     android:gravity="center"
-                    android:text="Welcome"/>
+                    android:text="@string/welcome"/>
                 <TextView
                     android:id="@+id/userNameField"
                     android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
                     style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:fontFamily="serif-monospace"
                     android:gravity="center"
-                    android:text="Name" />
+                    android:text="@string/name" />
             </LinearLayout>
         </LinearLayout>
 
@@ -86,12 +86,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.327"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/set_budget" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Budget"
+                android:text="@string/set_budget"
                 app:layout_constraintEnd_toEndOf="@+id/myBudget"
                 app:layout_constraintStart_toStartOf="@+id/myBudget"
                 app:layout_constraintTop_toBottomOf="@+id/myBudget" />
@@ -107,12 +108,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.583"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/set_goals" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Goals"
+                android:text="@string/set_goals"
                 app:layout_constraintEnd_toEndOf="@+id/myPlans"
                 app:layout_constraintStart_toStartOf="@+id/myPlans"
                 app:layout_constraintTop_toBottomOf="@+id/myPlans" />
@@ -140,7 +142,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:text="Transactions"
+                    android:text="@string/transactions"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
 

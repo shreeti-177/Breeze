@@ -99,6 +99,7 @@ public class CashTransactionActivity extends AppCompatActivity {
         SimpleDateFormat currentFormat = new SimpleDateFormat("MMM dd, yyyy");
         Date objectDate = currentFormat.parse(dateText);
 
+        MutableDateTime dateTime = new MutableDateTime(objectDate);
         DateFormat targetFormat = new SimpleDateFormat("MM-dd-yyyy");
         assert objectDate != null;
         String date = targetFormat.format(objectDate);
@@ -107,9 +108,9 @@ public class CashTransactionActivity extends AppCompatActivity {
         epoch.setDate(0);
         DateTime now = new DateTime();
         Months month = Months.monthsBetween(epoch,now);
-        Days day = Days.daysBetween(epoch,now);
+        Days day = Days.daysBetween(epoch,dateTime);
 
-        return new Data(expenseId, categoryName, merchant, Double.parseDouble(amount), date, month.getMonths(), day.getDays(), note);
+        return new Data(expenseId, categoryName, merchant, Double.parseDouble(amount), date, month.getMonths(), day.getDays()+1, note);
     }
 
     private ArrayAdapter<String> GetExistingCategoryList(){

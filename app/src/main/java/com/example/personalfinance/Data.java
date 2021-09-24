@@ -1,9 +1,5 @@
 package com.example.personalfinance;
 
-import org.joda.time.DateTime;
-
-import java.util.Date;
-
 public class Data {
     private String category;
     private String id;

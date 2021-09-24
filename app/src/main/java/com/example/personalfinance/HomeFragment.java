@@ -13,16 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,7 +46,7 @@ public class HomeFragment extends Fragment {
     /**/
     /*
     * NAME
-        HomeActivity::onCreateView() - Overrides the default onCreateView function for a fragment
+        HomeFragment::onCreateView() - Overrides the default onCreateView function for a fragment
 
     * SYNOPSIS
         void HomeFragment::onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,12 +79,38 @@ public class HomeFragment extends Fragment {
         //Inflate the layout for this fragment
         m_RootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        run();
+        //Execute update processes in the background (to fetch any new information from Plaid)
+        Util.m_Executor.execute(BackgroundTasks::UpdateOnlineTransactions);
+
+        //AddListeners for events
+        ListenForEvents();
         return m_RootView;
     } /*void HomeFragment::onCreateView(LayoutInflater inflater, ViewGroup container,
                             Bundle savedInstanceState);*/
 
-    void run(){
+
+    /**/
+    /*
+    * NAME
+        HomeFragment::ListenForEvents() - Sets OnClick Listeners for all events in the home fragment
+
+    * SYNOPSIS
+        HomeFragment::private void ListenForEvents();
+
+    * DESCRIPTION
+        This function will attempt to set listeners for the following events:
+        * Open activity to set budget when user clicks the Set Budget Icon
+        * Open activity to set goals when user click the Set Goals Icon
+        * Refresh the dashboard and transactions once new data is returned
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        12:37pm, 05/04/2021
+    */
+    /**/
+    private void ListenForEvents(){
         ImageButton m_AddBudgetBtn = m_RootView.findViewById(R.id.myBudget);
         ImageButton m_AddGoalsBtn = m_RootView.findViewById(R.id.myPlans);
 
@@ -101,7 +123,8 @@ public class HomeFragment extends Fragment {
 
         //Display current user's name in Home screen
         TextView m_UserName = m_RootView.findViewById(R.id.userNameField);
-        m_UserName.setText(Objects.requireNonNull(Util.m_Auth.getCurrentUser()).getDisplayName().split(" ")[0]);
+        m_UserName.setText(Objects.requireNonNull(Objects.requireNonNull(Util.m_Auth
+                .getCurrentUser()).getDisplayName()).split(" ")[0]);
 
         DisplayDashboard();
 
@@ -115,12 +138,13 @@ public class HomeFragment extends Fragment {
 
         DisplayTransactions();
         m_RootView.setVisibility(View.VISIBLE);
-    }
+    } /* HomeFragment::private void ListenForEvents(); */
+
 
     /**/
     /*
     * NAME
-        HomeActivity::DisplayTransactions() - Displays all transactions in descending order by date
+        HomeFragment::DisplayTransactions() - Displays all transactions in descending order by date
 
     * SYNOPSIS
         void HomeFragment::DisplayTransactions();
@@ -135,7 +159,7 @@ public class HomeFragment extends Fragment {
         Shreeti Shrestha
 
     * DATE
-        12:50pm, 02/04/2021
+        12:50pm, 05/04/2021
     */
     /**/
     private void DisplayTransactions(){
@@ -214,6 +238,7 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()){
                     Summary a_Summary = dataSnapshot.getValue(Summary.class);
                     Log.i("Here","here");
+                    assert a_Summary != null;
                     Log.i("Summar expense",a_Summary.getExpense().toString());
                     m_SummaryList.add(a_Summary);
                 }
@@ -241,8 +266,7 @@ public class HomeFragment extends Fragment {
     private View m_RootView;
     private RecyclerView m_HomePageView;
     private TextView m_TransactionsText;
-
-    public List<Data> m_AllTransactions = new ArrayList<>();
+    private final List<Data> m_AllTransactions = new ArrayList<>();
     private final List<Summary> m_SummaryList=new ArrayList<>();
 
     private final DatabaseReference m_ExpenseRef = FirebaseDatabase.getInstance().getReference()

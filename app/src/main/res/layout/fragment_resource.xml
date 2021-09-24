@@ -33,7 +33,8 @@
                     android:id="@+id/khanAcademyImg"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_resource_khan_academy"/>
+                    android:src="@drawable/ic_resource_khan_academy"
+                    android:contentDescription="@string/khan_academy_logo" />
                 <TextView
                     android:id="@+id/khanAcademyText"
                     android:layout_width="match_parent"
@@ -62,7 +63,8 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_resource_cnn"/>
+                    android:src="@drawable/ic_resource_cnn"
+                    android:contentDescription="@string/cnn_money_image" />
                 <TextView
                     android:layout_margin="10dp"
                     android:id="@+id/cnnMoneyText"
@@ -91,7 +93,8 @@
                     android:id="@+id/yahooImg"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_resource_yahoo"/>
+                    android:src="@drawable/ic_resource_yahoo"
+                    android:contentDescription="@string/yahoo_icon" />
                 <TextView
                     android:id="@+id/yahooText"
                     android:layout_margin="10dp"

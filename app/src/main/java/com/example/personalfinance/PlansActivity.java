@@ -5,7 +5,6 @@ package com.example.personalfinance;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,14 +63,14 @@ public class PlansActivity extends AppCompatActivity {
         m_RecyclerView.setAdapter(m_Adapter);
 
         ExtendedFloatingActionButton m_AddNewGoal = findViewById(R.id.addGoalBtn);
-        ExtendedFloatingActionButton m_AddSavings = findViewById(R.id.addSavingsBtn);
-
-        m_AddSavings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), SavingActivity.class));
-            }
-        });
+//        ExtendedFloatingActionButton m_AddSavings = findViewById(R.id.addSavingsBtn);
+//
+//        m_AddSavings.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getApplicationContext(), SavingActivity.class));
+//            }
+//        });
         m_AddNewGoal.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),
                 NewGoalActivity.class)));
     }/* protected void onCreate(Bundle savedInstanceState) */

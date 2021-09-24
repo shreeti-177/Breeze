@@ -26,14 +26,13 @@
     <string name="set_by_category"> Categories</string>
 
     <string name="new_category_budget">Add New Category</string>
-    <string name="cancel">Cancel</string>
     <string name="prompt_new_budget">Enter budget for the month</string>
     <string name="confirm_budget">Confirm</string>
     <string name="prompt_new_category">Select a Category</string>
     <string name="prompt_merchant_name">Enter Merchant Name</string>
     <string name="prompt_amount">Enter Amount</string>
     <string name="prompt_date">Pick a date</string>
-    <string name="prompt_notes">Note...</string>
+    <string name="prompt_notes">Note…</string>
 
     <string name="total_budget">Total Budget Amount</string>
     <string name="update">Update</string>
@@ -54,6 +53,58 @@
         If you want to know exactly what debt means or want to learn how to buy a bond and you prefer the written word, this is the premier place to go.
     </string>
     <string name="notifications">notifications</string>
+    <string name="budgetMonth">\"Budget Month: \"</string>
+    <string name="add_cash_transactions">Add Cash Transactions</string>
+    <string name="budget_month">Budget Month:</string>
+    <string name="all_categories">All Categories</string>
+    <string name="category_apparel">Apparel</string>
+    <string name="category_community">Community</string>
+    <string name="category_education">Education</string>
+    <string name="category_food">Food</string>
+    <string name="category_healthcare">Healthcare</string>
+    <string name="category_merchandise">Merchandise</string>
+    <string name="category_miscellaneous">Miscellaneous</string>
+    <string name="category_payments">Payments</string>
+    <string name="category_travel">Travel</string>
+    <string name="total_monthly_budget">Monthly Budget</string>
+    <string name="category_recreation">Recreation</string>
+    <string name="category_icon">Category Icon</string>
+    <string name="category_name">Category Name</string>
+    <string name="expense">Expense</string>
+    <string name="budget">Budget</string>
+    <string name="transactions">Transactions</string>
+    <string name="indicator">indicator</string>
+    <string name="spendings">Spendings</string>
+    <string name="app_logo">App Logo</string>
+    <string name="goals">Goals</string>
+    <string name="add_new_goal">+ Add New Goal</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="goal">Goal:</string>
+    <string name="goal_budget">Goal Budget:</string>
+    <string name="goal_savings">Goal Savings:</string>
+    <string name="spending">Spending</string>
+    <string name="arrow">Arrow</string>
+    <string name="enter_a_new_goal">Enter a New Goal</string>
+    <string name="user_icon">User Icon</string>
+    <string name="name">Name</string>
+    <string name="welcome">Welcome</string>
+    <string name="set_budget">Set Budget</string>
+    <string name="set_goals">Set Goals</string>
+    <string name="khan_academy_logo">Khan Academy Logo</string>
+    <string name="yahoo_icon">Yahoo Icon</string>
+    <string name="cnn_money_image">CNN Money Image</string>
+    <string name="amount">Amount</string>
+    <string name="date">Date</string>
+    <string name="transaction_amount">+/- Amount</string>
+    <string name="home">Home</string>
+    <string name="categories">Categories</string>
+    <string name="resources">Resources</string>
+    <string name="habits">Habits</string>
+    <string name="cash_transactions">Cash Transactions</string>
+    <string name="profile">Profile</string>
+    <string name="log_out">Log Out</string>
 
 
 </resources>

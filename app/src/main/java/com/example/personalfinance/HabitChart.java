@@ -1,8 +1,6 @@
 package com.example.personalfinance;
 
 import android.graphics.Color;
-import android.icu.text.Transliterator;
-import android.util.Log;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;

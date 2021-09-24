@@ -60,6 +60,7 @@
             app:layout_constraintEnd_toEndOf="@id/bottomAppBar"
             app:layout_constraintTop_toTopOf="@id/bottomAppBar"
             app:fabCustomSize="72dp"
-            app:maxImageSize="34dp"/>
+            app:maxImageSize="34dp"
+            android:contentDescription="@string/add_cash_transactions" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -118,7 +118,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomePageViewHo
         }
         else{
             amountField.setTextColor(Color.parseColor("#C41E3A"));
-            amountField.setText("-" + String.valueOf(amount));
+            amountField.setText("-" + amount);
         }
 
         // Set category tag for each transaction
@@ -144,10 +144,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomePageViewHo
             m_DateField=itemView.findViewById(R.id.dateField);
             m_AmountField=itemView.findViewById(R.id.amountField);
             m_CategoryField=itemView.findViewById(R.id.categoryTag);
-            m_UserNameField=itemView.findViewById(R.id.userNameField);
         }
 
-        private TextView m_UserNameField;
         private final TextView m_MerchantField;
         private final TextView m_DateField;
         private final TextView m_AmountField;

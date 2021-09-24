@@ -7,18 +7,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -53,10 +50,11 @@ public class HomeActivity extends OnboardActivity{
     */
     /**/
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //On creating activity, set base layout
         setContentView(R.layout.activity_base_home);
 
         m_FrameLayout=findViewById(R.id.frameLayout);
@@ -64,29 +62,24 @@ public class HomeActivity extends OnboardActivity{
         m_ProgressBar=findViewById(R.id.loading);
         m_FrameLayout.setVisibility(View.INVISIBLE);
         m_ProgressBar.setVisibility(View.VISIBLE);
+
+        //Fetch Updated Transactions and summaries from database on startup
         BackgroundTasks.UpdateOnlineTransactions();
 
-
+        //Display charts only when updated transactions are returned
         Handler handler = new Handler(Looper.myLooper());
         handler.postDelayed(()->{
-            run();
+            Run();
             m_ProgressBar.setVisibility(View.INVISIBLE);
             m_FrameLayout.setVisibility(View.VISIBLE);
-        },3000);
-
-
+        },2000);
     } /*protected void onCreate(Bundle savedInstanceState)*/
 
-    private void run(){
-        //On creating activity, set base layout
-//        setContentView(R.layout.activity_base_home);
-
+    private void Run(){
 
         MaterialToolbar toolbar = findViewById(R.id.topAppBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         BottomNavigationView m_BottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -126,6 +119,32 @@ public class HomeActivity extends OnboardActivity{
         });
 
     }
+
+
+    /**/
+    /*
+    * NAME
+        HomeActivity::onOptionsCreateMenu() - Inflates the menu list in the right side of the toolbar
+
+    * SYNOPSIS
+        public boolean onCreateOptionsMenu(Menu menu);
+        * menu => list of options available
+
+    * RETURNS
+        Returns the full list of menu options
+
+    * DESCRIPTION
+        This function will attempt to list the menu options available, which include:
+        * editing user profile
+        * user log out
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        10:47am, 04/04/2021
+    */
+    /**/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater =getMenuInflater();
@@ -133,6 +152,29 @@ public class HomeActivity extends OnboardActivity{
         return super.onCreateOptionsMenu(menu);
     }
 
+
+    /**/
+    /*
+    * NAME
+        HomeActivity::onOptionsItemSelected() - Navigate to another activity based on user selection
+
+    * SYNOPSIS
+        public boolean onOptionsItemSelected(@NonNull MenuItem item);
+        * item => the selected option
+
+    * RETURNS
+        Returns true if the user is successfully redirected
+
+    * DESCRIPTION
+        This function will attempt to
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        10:47am, 04/04/2021
+    */
+    /**/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
@@ -149,12 +191,10 @@ public class HomeActivity extends OnboardActivity{
         }
     }
 
-//    TextView m_BadgeCounter;
-//    int m_PendingNotifications=Util.GetPendingNotifications();
-//    MenuItem m_MenuItem;
 
     private ProgressBar m_ProgressBar;
     private FrameLayout m_FrameLayout;
+
     //Create new fragment instance for each navigation button
     private final HomeFragment HomePageFragment = new HomeFragment();
     private final CategoryFragment CategoryPageFragment = new CategoryFragment();

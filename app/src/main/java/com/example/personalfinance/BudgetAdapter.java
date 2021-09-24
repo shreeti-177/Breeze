@@ -25,19 +25,17 @@ public class BudgetAdapter extends FirebaseRecyclerAdapter<Data, BudgetAdapter.C
         holder.SetCategoryName(model.getCategory());
         holder.SetCategoryBudget(String.valueOf(model.getAmount()));
         holder.SetCategoryImage(model.getCategory());
-        holder.SetBudgetDate(model.getDate());
-//                holder.ShowOptions();
-    }
+        holder.SetBudgetDate(model.getDate()); }
 
     @NonNull
     @NotNull
     @Override
     public BudgetAdapter.CategoryViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.retrieve_category_budget, parent, false);
-        return new BudgetAdapter.CategoryViewHolder(view);
+        return new CategoryViewHolder(view);
     }
 
-    class CategoryViewHolder extends RecyclerView.ViewHolder{
+    static class CategoryViewHolder extends RecyclerView.ViewHolder{
         View m_View;
 
         public CategoryViewHolder(@NonNull @NotNull View itemView) {

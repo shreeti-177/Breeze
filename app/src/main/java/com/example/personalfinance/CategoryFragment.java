@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class CategoryFragment extends Fragment {
@@ -81,7 +79,6 @@ public class CategoryFragment extends Fragment {
         return m_RootView;
     }
 
-    ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     private ExpenseAdapter m_Adapter;
     private final List<Data> monthlyDataList=new ArrayList<>();
     private Double totalMonthlyExpense = 0.0;

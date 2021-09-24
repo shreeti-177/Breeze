@@ -16,7 +16,6 @@ import com.plaid.client.model.TransactionsGetResponse;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
 import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
@@ -34,24 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Response;
 
 public class BackgroundTasks extends AppCompatActivity {
     BackgroundTasks(){}
 
-
-    static public void StoreExpenseSummary(Double a_TotalExpense){
-        Util.GetSummaryReference().child("expense").setValue(a_TotalExpense)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "SetMonthlyExpenseSummary: success");
-                    } else {
-                        Log.w(TAG, "SetMonthlyExpenseSummary: failure", task.getException());
-                    }
-                });
-    }
 
     static public void StoreBudgetSummary(Double a_TotalBudget){
         Util.GetSummaryReference().child("budget").setValue(a_TotalBudget)
@@ -65,9 +52,7 @@ public class BackgroundTasks extends AppCompatActivity {
     }
 
     static public void UpdateOnlineTransactions(){
-        Util.m_Executor.execute(()->{
-            GetAccessToken();
-        });
+        Util.m_Executor.execute(BackgroundTasks::GetAccessToken);
     }
 
     public static void GetAccessToken(){
@@ -81,7 +66,6 @@ public class BackgroundTasks extends AppCompatActivity {
                         FetchTransactions(m_AccessToken);
                         AddTransactionsToDatabase();
                         GetNewSummaries();
-//                        FetchExistingSummaries();
                         Log.i("Ends","Reaches here");
 
                     } catch (IOException | ParseException e) {
@@ -127,8 +111,6 @@ public class BackgroundTasks extends AppCompatActivity {
 
     public static void UpdateSummaries(){
         for(int month:expenseSummary.keySet()){
-
-            DateTime d = new DateTime();
 
             MutableDateTime a_Epoch = new MutableDateTime();
             a_Epoch.setDate(0);
@@ -191,6 +173,7 @@ public class BackgroundTasks extends AppCompatActivity {
 
 
         Calendar calendar = new GregorianCalendar();
+        assert a_ObjectDate != null;
         calendar.setTime(a_ObjectDate);
 
         DateFormat m_TargetFormat = new SimpleDateFormat("MM-dd-yyyy");
@@ -206,10 +189,7 @@ public class BackgroundTasks extends AppCompatActivity {
         Months a_Month = Months.monthsBetween(a_Epoch,a_now);
         Days a_Day = Days.daysBetween(a_Epoch,a_now);
 
-        Data a_Expense = new Data(expenseId, categoryName, merchant, amount, a_Date, a_Month.getMonths(), a_Day.getDays(), note);
-        a_dateTime=new DateTime(a_ObjectDate);
-
-        return a_Expense;
+        return new Data(expenseId, categoryName, merchant, amount, a_Date, a_Month.getMonths(), a_Day.getDays(), note);
     }
 
     public static void FetchTransactions(String a_AccessToken) throws IOException {
@@ -237,20 +217,17 @@ public class BackgroundTasks extends AppCompatActivity {
                 }
             }
         }
-        TransactionsGetResponse transactionResponse = apiResponse.body();
-        Log.i("Api response",String.valueOf(apiResponse.body()));
+        Log.d("Api response",String.valueOf(apiResponse.body()));
 
         assert apiResponse.body() != null;
-        Log.i("Total Number of Transactions",String.valueOf(apiResponse.body().getTotalTransactions()));
         m_OnlineTransactions.addAll(apiResponse.body().getTransactions());
     }
 
-    private static Map<Integer, Double> expenseSummary =  new HashMap<>();
-    private static DatabaseReference m_BaseDataRef = FirebaseDatabase.getInstance().getReference()
+    private static final Map<Integer, Double> expenseSummary =  new HashMap<>();
+    private static final DatabaseReference m_BaseDataRef = FirebaseDatabase.getInstance().getReference()
             .child("base-data").child(Util.getUid());
     public static List<Transaction> m_OnlineTransactions=new ArrayList<>();
     public static String m_AccessToken;
     private final static String TAG = "BackgroundTask";
-    private static DateTime a_dateTime=new DateTime();
 
 }
