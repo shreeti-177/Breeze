@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="horizontal_gutters">20dp</dimen>
+    <dimen name="notification_icon_size">28dp</dimen>
+    <dimen name="dimen_badge_size">20dp</dimen>
 </resources>

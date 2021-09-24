@@ -4,6 +4,7 @@
 package com.example.personalfinance;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -96,6 +97,8 @@ public class Dashboard {
 
         ArrayList<Entry> entryArrayList = new ArrayList<>();
 
+        Log.i("Hrere","Size");
+        Log.i("Size of list",String.valueOf(a_SummaryList.size()));
         //Add (x,y) plot values to entryArrayList
         List<String> a_XAxisLabel = new ArrayList<>();
         for (int i=0;i<a_SummaryList.size();i++){

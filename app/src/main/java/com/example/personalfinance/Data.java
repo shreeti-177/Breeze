@@ -21,16 +21,6 @@ public class Data {
     private String goalCategory;
     private Double goalBudget;
 
-//    public DateTime getDateTime() {
-//        return dateTime;
-//    }
-//
-//    public void setDateTime(DateTime dateTime) {
-//        this.dateTime = dateTime;
-//    }
-//
-//    private DateTime dateTime=new DateTime();
-
     public Data(){}
 
     public Data(String a_Id, String a_Category, Double a_Amount, String a_Date, int a_Month, int a_Day){

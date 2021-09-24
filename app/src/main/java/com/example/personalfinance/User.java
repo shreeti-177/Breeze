@@ -7,16 +7,30 @@ public class User {
 //    private String lastName;
     private String fullName;
     private String email;
+    private String password;
     private String Uid;
-    private String url;
+//    private String url;
     public User(){}
 
+    public User(String a_fullName, String a_Email, String a_Password){
+        this.fullName=a_fullName;
+        this.email=a_Email;
+        this.password = a_Password;
+    }
     public String GetEmail() {
         return email;
     }
 
     public void SetEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String GetUid() {
@@ -54,13 +68,13 @@ public class User {
 //        this.lastName = lastName;
 //    }
 
-    public String GetUrl() {
-        return url;
-    }
-
-    public void SetUrl(String url) {
-        this.url = url;
-    }
+//    public String GetUrl() {
+//        return url;
+//    }
+//
+//    public void SetUrl(String url) {
+//        this.url = url;
+//    }
 
     public String GetFullName() {
         return fullName;

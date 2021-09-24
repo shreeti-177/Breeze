@@ -28,6 +28,13 @@ import java.util.concurrent.Executors;
 public class Util {
 
 
+    public static void IncrementNotification(int a_Size){
+        m_PendingNotifications+=a_Size;
+    }
+
+    public static int GetPendingNotifications(){
+        return m_PendingNotifications;
+    }
     public static void CheckForNullEntry(String a_TextEntry, EditText a_TextField){
         if(a_TextEntry.isEmpty()){
             a_TextField.setError("Required Field");
@@ -166,6 +173,7 @@ public class Util {
         m_Uid = a_Uid;
     }
 
+    private static int m_PendingNotifications = 0;
     public static ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     public static FirebaseAuth m_Auth = FirebaseAuth.getInstance();
     private static String m_Uid = Objects.requireNonNull(m_Auth.getCurrentUser()).getUid();

@@ -2,13 +2,17 @@ package com.example.personalfinance;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,6 +45,8 @@ import com.plaid.link.result.LinkErrorCode;
 import com.plaid.link.result.LinkExitMetadata;
 import com.plaid.link.result.LinkResultHandler;
 import com.plaid.link.result.LinkSuccessMetadata;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -97,6 +103,10 @@ public class OnboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboard);
+
+        m_CarouselView=findViewById(R.id.carouselView);
+        m_CarouselView.setPageCount(m_Images.length);
+        m_CarouselView.setImageListener(m_ImageListener);
         Button m_LinkAccount = findViewById(R.id.linkAccountBtn);
         m_LinkAccount.setOnClickListener(v -> {
             m_Executor.execute(()->{
@@ -115,6 +125,14 @@ public class OnboardActivity extends AppCompatActivity {
         });
     }
 
+    ImageListener m_ImageListener = new ImageListener() {
+        @Override
+        public void setImageForPosition(int position, ImageView imageView) {
+            imageView.setImageResource(m_Images[position]);
+            imageView.setAdjustViewBounds(true);
+        }
+    };
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -130,7 +148,6 @@ public class OnboardActivity extends AppCompatActivity {
             }
         });
         finishActivity(requestCode);
-
         startActivity(new Intent(this, HomeActivity.class));
     }
 
@@ -211,6 +228,8 @@ public class OnboardActivity extends AppCompatActivity {
         return m_PublicToken;
     }
 
+    CarouselView m_CarouselView;
+    int[] m_Images = {R.drawable.carousel1, R.drawable.carousel2, R.drawable.carousel3};
     ExecutorService m_Executor = Executors.newSingleThreadExecutor();
     private String m_PublicToken;
     protected PlaidApi m_PlaidClient;

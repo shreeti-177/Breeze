@@ -5,10 +5,15 @@ package com.example.personalfinance;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,19 +56,29 @@ public class HomeActivity extends OnboardActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        BackgroundTasks.UpdateOnlineTransactions();
-        //On creating activity, set base layout
         setContentView(R.layout.activity_base_home);
+        m_ProgressBar=findViewById(R.id.loading);
+        m_ProgressBar.setVisibility(View.VISIBLE);
+
+        Handler handler = new Handler(Looper.myLooper());
+        handler.postDelayed(()->{
+            run();
+            m_ProgressBar.setVisibility(View.GONE);
+        },3000);
+
+
+    } /*protected void onCreate(Bundle savedInstanceState)*/
+
+    private void run(){
+        //On creating activity, set base layout
+//        setContentView(R.layout.activity_base_home);
+
 
         MaterialToolbar toolbar = findViewById(R.id.topAppBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        m_Executor.execute(()->{
-            BackgroundTasks.UpdateOnlineTransactions();
-        });
+
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         BottomNavigationView m_BottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -95,19 +110,30 @@ public class HomeActivity extends OnboardActivity{
                     break;
                 //Default to viewing home page
                 default:
-                fragment = HomePageFragment;
-                break;
+                    fragment = HomePageFragment;
+                    break;
             }
             fragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit();
             return true;
         });
 
-    } /*protected void onCreate(Bundle savedInstanceState)*/
-
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater =getMenuInflater();
         inflater.inflate(R.menu.top_app_bar, menu);
+//        m_MenuItem=menu.findItem(R.id.notification);
+//        m_BadgeCounter=findViewById(R.id.badge_counter);
+//
+//        if(m_PendingNotifications==0){
+//            m_MenuItem.setActionView(null);
+//        }
+//        else{
+//            m_MenuItem.setActionView(R.layout.notification_badge);
+//            View view=m_MenuItem.getActionView();
+//            m_BadgeCounter=view.findViewById(R.id.badge_counter);
+//            m_BadgeCounter.setText(String.valueOf(m_PendingNotifications));
+//        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -127,6 +153,11 @@ public class HomeActivity extends OnboardActivity{
         }
     }
 
+//    TextView m_BadgeCounter;
+//    int m_PendingNotifications=Util.GetPendingNotifications();
+//    MenuItem m_MenuItem;
+
+    private ProgressBar m_ProgressBar;
     //Create new fragment instance for each navigation button
     private final HomeFragment HomePageFragment = new HomeFragment();
     private final CategoryFragment CategoryPageFragment = new CategoryFragment();

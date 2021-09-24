@@ -56,10 +56,9 @@ public class UserProfile extends AppCompatActivity {
         FirebaseUser user = m_Auth.getCurrentUser();
         uId = user.getUid();
 
-        DocumentReference documentReference = firestore.collection("user").document(uId);
-        storageReference = FirebaseStorage.getInstance().getReference("Profile Images");
+        DocumentReference documentReference = firestore.collection("users").document(uId);
 
-        databaseReference = database.getReference("Users");
+        databaseReference = database.getReference("users");
 
         m_Save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,15 +67,15 @@ public class UserProfile extends AppCompatActivity {
             }
         });
 
-        m_Image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivity(intent);
-            }
-        });
+//        m_Image.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent();
+//                intent.setType("image/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                startActivity(intent);
+//            }
+//        });
 
         m_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,17 +95,6 @@ public class UserProfile extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        try{
-            if(requestCode== PICK_IMAGE || requestCode == RESULT_OK || data!=null || data.getData()!=null){
-                m_ImageUri = data.getData();
-                Picasso.get().load(m_ImageUri).into(m_Image);
-            }
-
-        }catch (Exception e){
-            Log.e("Exception",e.getMessage());
-        }
-
-
     }
 
     private String getFileExt(Uri a_Uri){
@@ -121,45 +109,24 @@ public class UserProfile extends AppCompatActivity {
         String lastName = m_LastName.getText().toString();
         String email = m_Email.getText().toString();
 
-        if(!TextUtils.isEmpty(name) || !TextUtils.isEmpty(firstName) ||!TextUtils.isEmpty(lastName)||!TextUtils.isEmpty(email) || m_ImageUri!=null ){
-            final StorageReference reference = storageReference.child(System.currentTimeMillis()+"."+getFileExt(m_ImageUri));
-            UploadTask uploadTask = reference.putFile(m_ImageUri);
+        if(!TextUtils.isEmpty(name) || !TextUtils.isEmpty(firstName) ||!TextUtils.isEmpty(lastName)||!TextUtils.isEmpty(email) ) {
+            Map<String, String> profile = new HashMap<>();
+            profile.put("name", name);
+            profile.put("email", email);
+            profile.put("privacy", "Public");
 
-            Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            m_NewUser.SetFullName(name);
+            m_NewUser.SetEmail(email);
+            m_NewUser.SetUid(uId);
+
+            databaseReference.child(uId).setValue(m_NewUser);
+            m_DocumentReference.set(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
-                public Task<Uri> then(@NonNull @NotNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if(!task.isSuccessful()){
-                        throw task.getException();
-                    }
-                    return reference.getDownloadUrl();
-
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull @NotNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        Map<String, String> profile = new HashMap<>();
-                        profile.put("name", name);
-                        profile.put("email", email);
-                        profile.put("privacy", "Public");
-
-                        m_NewUser.SetFullName(name);
-                        m_NewUser.SetEmail(email);
-                        m_NewUser.SetUid(uId);
-                        m_NewUser.SetUrl(downloadUri.toString());
-
-                        databaseReference.child(uId).setValue(m_NewUser);
-                        m_DocumentReference.set(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
+                public void onSuccess(Void unused) {
                                 Toast.makeText(getApplicationContext(), "Profile Saved!", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         });
-                    }
-                };
-            });
         }
         else{
             Log.e("Exception","Empty Field");

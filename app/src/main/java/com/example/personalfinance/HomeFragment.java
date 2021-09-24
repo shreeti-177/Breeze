@@ -78,11 +78,17 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        BackgroundTasks.UpdateOnlineTransactions();
+
 
         //Inflate the layout for this fragment
         m_RootView = inflater.inflate(R.layout.fragment_home, container, false);
 
+        run();
+        return m_RootView;
+    } /*void HomeFragment::onCreateView(LayoutInflater inflater, ViewGroup container,
+                            Bundle savedInstanceState);*/
+
+    void run(){
         ImageButton m_AddBudgetBtn = m_RootView.findViewById(R.id.myBudget);
         ImageButton m_AddGoalsBtn = m_RootView.findViewById(R.id.myPlans);
 
@@ -95,7 +101,7 @@ public class HomeFragment extends Fragment {
 
         //Display current user's name in Home screen
         TextView m_UserName = m_RootView.findViewById(R.id.userNameField);
-        m_UserName.setText(Objects.requireNonNull(Util.m_Auth.getCurrentUser()).getDisplayName());
+        m_UserName.setText(Objects.requireNonNull(Util.m_Auth.getCurrentUser()).getDisplayName().split(" ")[0]);
 
         DisplayDashboard();
 
@@ -108,12 +114,8 @@ public class HomeFragment extends Fragment {
         m_HomePageView.setAdapter(m_HomeAdapter);
 
         DisplayTransactions();
-
-        return m_RootView;
-    } /*void HomeFragment::onCreateView(LayoutInflater inflater, ViewGroup container,
-                            Bundle savedInstanceState);*/
-
-
+        m_RootView.setVisibility(View.VISIBLE);
+    }
 
     /**/
     /*
@@ -211,6 +213,8 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()){
                     Summary a_Summary = dataSnapshot.getValue(Summary.class);
+                    Log.i("Here","here");
+                    Log.i("Summar expense",a_Summary.getExpense().toString());
                     m_SummaryList.add(a_Summary);
                 }
 

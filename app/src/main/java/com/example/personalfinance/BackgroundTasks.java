@@ -16,6 +16,7 @@ import com.plaid.client.model.TransactionsGetResponse;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
 import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
@@ -29,7 +30,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,6 +80,10 @@ public class BackgroundTasks extends AppCompatActivity {
                     try {
                         FetchTransactions(m_AccessToken);
                         AddTransactionsToDatabase();
+                        FetchExistingSummaries();
+                        UpdateSummaries();
+                        Log.i("Ends","Reaches here");
+
                     } catch (IOException | ParseException e) {
                         e.printStackTrace();
                     }
@@ -90,9 +97,68 @@ public class BackgroundTasks extends AppCompatActivity {
         });
     }
 
+    public static void FetchExistingSummaries() {
+        for(int month: expenseSummary.keySet()){
+            FirebaseDatabase.getInstance().getReference().child("summary").child(Util.getUid())
+                    .child(String.valueOf(month)).child("expense")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Double prevVal = (Double) dataSnapshot.getValue();
+                        Double newVal = expenseSummary.get(month)+prevVal;
+                        expenseSummary.put(month, newVal);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {}
+                });
+        }
+    }
+
+    public static void UpdateSummaries(){
+        for(int month:expenseSummary.keySet()){
+
+            DateTime d = new DateTime();
+
+            MutableDateTime a_Epoch = new MutableDateTime();
+            a_Epoch.setDate(0);
+            a_Epoch.addMonths(month+1);
+
+//            DateTime date = new DateTime();
+            String currentMonth = a_Epoch.toString("MMM-yyyy");
+            Log.i("HEre month", currentMonth);
+            Summary summary = new Summary(currentMonth, month, expenseSummary.get(month));
+
+            FirebaseDatabase.getInstance().getReference().child("summary").child(Util.getUid())
+                    .child(String.valueOf(month)).setValue(summary)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "AddTransaction: success");
+                        } else {
+                            Log.w(TAG, "AddTransaction: failure", task.getException());
+                        }
+                    });
+        }
+        Log.i("Update summ","Reaches here");
+    }
+
     public static void AddTransactionsToDatabase() throws ParseException {
+        expenseSummary.clear();
         for(Transaction t: m_OnlineTransactions) {
+            if(t.getAmount()<0){
+                continue;
+            }
             Data a_Expense = CreateExpenseObject(t);
+            if (!expenseSummary.containsKey(a_Expense.getMonth())) {
+                expenseSummary.put(a_Expense.getMonth(), 0.0);
+            }
+            Double prevVal = expenseSummary.get(a_Expense.getMonth());
+            Double newVal = a_Expense.getAmount() + prevVal;
+            expenseSummary.put(a_Expense.getMonth(), newVal);
+            Log.i("Pre summ","Reaches here");
+
             Util.GetExpenseReference().child(a_Expense.getId()).setValue(a_Expense).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "AddTransaction: success");
@@ -188,6 +254,7 @@ public class BackgroundTasks extends AppCompatActivity {
         m_OnlineTransactions.addAll(apiResponse.body().getTransactions());
     }
 
+    private static Map<Integer, Double> expenseSummary =  new HashMap<>();
     private static DatabaseReference m_BaseDataRef = FirebaseDatabase.getInstance().getReference()
             .child("base-data").child(Util.getUid());
     public static List<Transaction> m_OnlineTransactions=new ArrayList<>();

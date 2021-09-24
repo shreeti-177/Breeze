@@ -29,6 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import javax.annotation.CheckForNull;
+
 public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
         TextView m_SignInLink = findViewById(R.id.signInLink);
         m_ProgressBar=findViewById(R.id.progress_log);
         m_Auth= FirebaseAuth.getInstance();
+        m_Database=FirebaseDatabase.getInstance().getReference();
 
         m_SignUpBtn.setOnClickListener(v -> RegistrationButtonClicked());
 
@@ -93,11 +96,19 @@ public class RegisterActivity extends AppCompatActivity {
     */
     /**/
     private void RegistrationButtonClicked(){
-        String userEmail=GetUserEmail();
-        String userPassword=GetUserPassword();
-        m_UserName=m_FirstName.getText().toString().trim()+" " + m_LastName.getText().toString().trim();
-        m_ProgressBar.setVisibility(View.VISIBLE);
-        RegisterWithFirebase(userEmail,userPassword);
+        String firstName = GetString(m_FirstName);
+        String lastName = GetString(m_LastName);
+        String fullName = firstName + " " + lastName;
+        String userEmail=GetString(m_NewUserEmail);
+        String userPassword=GetString(m_NewUserPassword);
+        String userConfirmPassword=GetString(m_ConfirmUserPassword);
+        if(ValidateInputs(userEmail,userPassword,userConfirmPassword)){
+            m_UserName=m_FirstName.getText().toString().trim()+" " + m_LastName.getText().toString().trim();
+            m_ProgressBar.setVisibility(View.VISIBLE);
+            m_User = new User(fullName, userEmail, userPassword);
+            RegisterWithFirebase(userEmail,userPassword);
+        }
+
     }/* private void RegistrationButtonClicked() */
 
     /**/
@@ -129,9 +140,9 @@ public class RegisterActivity extends AppCompatActivity {
         m_Auth.createUserWithEmailAndPassword(a_UserEmail,a_UserPassword).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()){
                 Log.d(TAG, "CreateUserWithEmail: success");
-                SetUserProfile();
+                FirebaseUser currentUser = m_Auth.getCurrentUser();
+                SetUserProfile(currentUser);
                 Toast.makeText(getApplicationContext(), "Registration Successful!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), OnboardActivity.class));
             }
             else{
                 Log.w(TAG, "CreateUserWithEmail: failure", task.getException());
@@ -159,19 +170,23 @@ public class RegisterActivity extends AppCompatActivity {
         08:00pm, 02/02/2021
     */
     /**/
-    private void SetUserProfile(){
-        FirebaseUser currentUser = m_Auth.getCurrentUser();
+    private void SetUserProfile(FirebaseUser a_CurrentUser){
+
+        String keyId = m_Database.push().getKey();
+        m_Database.child("users").child(keyId).setValue(m_User);
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(m_UserName)
 //                        .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                 .build();
 
-        currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+        a_CurrentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d(TAG, "User profile updated.");
             }
         });
+        startActivity(new Intent(getApplicationContext(), OnboardActivity.class));
+
     }/* private void SetUserProfile() */
 
 
@@ -198,59 +213,38 @@ public class RegisterActivity extends AppCompatActivity {
         08:00pm, 02/02/2021
     */
     /**/
-    private String GetUserEmail(){
-        String userEmail=m_NewUserEmail.getText().toString().trim();
-        CheckForNullEntry(userEmail, m_NewUserEmail);
-        if(!(userEmail.contains("@"))){
+
+    private String GetString(EditText a_TextField){
+        String value = a_TextField.getText().toString().trim();
+        CheckForNullEntry(value, a_TextField);
+        return value;
+    }
+
+    private boolean ValidateInputs(String a_Email, String a_Password, String a_ConfirmPassword){
+        if(!(a_Email.contains("@"))){
             m_NewUserEmail.setError("Invalid Email Address");
             m_NewUserEmail.requestFocus();
-            m_SignUpBtn.setClickable(false);
+            return false;
         }
-        return userEmail;
-    }/* private String GetUserEmail() */
-
-
-    /**/
-    /*
-    * NAME
-        RegisterActivity::GetUserPassword() - Validates user password before returning to the caller
-
-    * SYNOPSIS
-        String RegisterActivity::GetUserPassword();
-
-    * DESCRIPTION
-        This function will attempt to collect the user entered password and check for null entry.
-
-    * RETURNS
-        Returns validated userPassword to caller
-
-    * AUTHOR
-        Shreeti Shrestha
-
-    * DATE
-        08:00pm, 02/02/2021
-    */
-    /**/
-    private String GetUserPassword(){
-        String userPassword=m_NewUserPassword.getText().toString().trim();
-        String confirmUserPassword =m_ConfirmUserPassword.getText().toString().trim();
-        CheckForNullEntry(userPassword,m_NewUserPassword);
-        CheckForNullEntry(confirmUserPassword,m_ConfirmUserPassword);
-
-        if(userPassword.length()<6){
+        if (a_Password.length() < 6) {
             Log.e(TAG, "Password should be at least 6 characters");
             m_NewUserPassword.setError("Password should be at least 6 characters");
             m_NewUserPassword.requestFocus();
+            return false;
         }
-        if(!(userPassword.contentEquals(confirmUserPassword))){
+        if (!(a_Password.contentEquals(a_ConfirmPassword))) {
             Log.e(TAG, "Passwords do not match");
             m_NewUserPassword.setError("Passwords do not match");
             m_ConfirmUserPassword.setError("Passwords do not match");
-            m_NewUserPassword.requestFocus();
 
+            m_NewUserPassword.requestFocus();
+            m_ConfirmUserPassword.requestFocus();
+            return false;
         }
-        return userPassword;
-    }/* private String GetUserPassword() */
+        return true;
+
+    }
+
 
     /**/
     /*
@@ -289,6 +283,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText m_FirstName;
     private EditText m_LastName;
     private FirebaseAuth m_Auth;
+    private DatabaseReference m_Database;
+    public User m_User;
     private String m_UserName;
     private Button m_SignUpBtn;
     private ProgressBar m_ProgressBar;

@@ -11,7 +11,7 @@
     <string name="existing_account">Already have an account?</string>
     <string name="forgot_password">FORGOT PASSWORD?</string>
     <string name="new_user">Don\'t Have an Account?</string>
-    <string name="welcome_user">Welcome User!</string>
+    <string name="welcome_user">Welcome Aboard!</string>
     <string name="prompt_next">Next</string>
     <string name="prompt_skip">Skip</string>
     <string name="prompt_link">Link My Bank Account</string>
@@ -53,6 +53,7 @@
     <string name="yahoo_blob">
         If you want to know exactly what debt means or want to learn how to buy a bond and you prefer the written word, this is the premier place to go.
     </string>
+    <string name="notifications">notifications</string>
 
 
 </resources>
