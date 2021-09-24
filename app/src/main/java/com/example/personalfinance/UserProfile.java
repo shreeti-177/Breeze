@@ -72,6 +72,7 @@ public class UserProfile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 UploadData();
+                finish();
             }
         });
 

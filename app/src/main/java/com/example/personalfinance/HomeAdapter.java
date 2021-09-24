@@ -113,12 +113,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomePageViewHo
         // If transaction is a credit, display amount in green.
         // Otherwise, display amount in red.
         if(amount<0){
-            amountField.setTextColor(Color.parseColor("#C41E3A"));
-            amountField.setText(String.valueOf(amount));
+            amountField.setTextColor(Color.parseColor("#6FCF97"));
+            amountField.setText(String.valueOf(-(amount)));
         }
         else{
-            amountField.setTextColor(Color.parseColor("#6FCF97"));
-            amountField.setText("+" + String.valueOf(amount));
+            amountField.setTextColor(Color.parseColor("#C41E3A"));
+            amountField.setText("-" + String.valueOf(amount));
         }
 
         // Set category tag for each transaction

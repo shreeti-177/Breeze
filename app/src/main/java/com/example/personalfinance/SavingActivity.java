@@ -49,6 +49,7 @@ public class SavingActivity extends AppCompatActivity {
                     Util.GetPlansReference().child(goal).child("savings").setValue(amount).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "SetSaving: success");
+
                             finish();
                         } else {
                             Log.w(TAG, "SetSaving: failure", task.getException());

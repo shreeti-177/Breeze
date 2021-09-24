@@ -79,7 +79,7 @@ public class BudgetActivity extends AppCompatActivity {
         Travel = findViewById(R.id.Travel);
         TextView totalBudget = findViewById(R.id.totalBudget);
 
-//        FlushSavedPreferences();
+        FlushSavedPreferences();
         LoadAllSavedPreferences();
         ButtonClickListeners();
 
