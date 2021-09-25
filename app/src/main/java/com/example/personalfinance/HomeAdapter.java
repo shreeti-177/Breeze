@@ -96,10 +96,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomePageViewHo
 
         Data key = m_Transactions.get(m_Transactions.size()-(position+1));
 
-        String merchant = key.getMerchant();
-        String date = key.getDate();
-        Double amount = key.getAmount();
-        String category = key.getCategory();
+        String merchant = key.GetMerchant();
+        String date = key.GetDate();
+        Double amount = key.GetAmount();
+        String category = key.GetCategory();
 
         // Ignore transaction if there are null values
         if (merchant==null||date==null||amount==null){

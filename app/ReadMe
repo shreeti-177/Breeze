@@ -1,0 +1,55 @@
+MainActivity is the starting point of the application.
+All Java files are included in the path: src/java/com.example.personalfinance
+The layout pages are included in the path: src/res/layout
+
+MainActivity: Starting point of the application. Launch the Login page.
+
+LoginActivity: Implementation of the login feature for the application
+
+RegisterActivity: Implementation of creating of a new user
+
+OnboardActivity: Implementation of  linking bank account with the help of an external API, Plaid
+
+HomeActivity: Implementation of base layout for all other fragments and classes within the application
+
+HomeFragment: Implementation of the default home page
+
+Dashboard: Line Chart implementation for the HomeFragment dashboard
+
+HomeAdapter: Adapter to listen to any changes and update dashboard and transaction list in real time
+
+CategoryFragment: Implements expense breakdown by category
+
+CategoryAdapter: Updates category fragment in real time based on any new changes
+
+HabitFragment: Spending Habits of the user for previous and current month in each category
+
+HabitChart: Bar Chart implementation for the category charts in Fragment habit
+
+HabitAdapter: Adapter to listen to any changes and update HabitChart
+
+ResourceFragment: Implementation of layout to display useful courses in Personal Finance
+
+BudgetActivity: Implementation of the Set Budget for the current month
+
+BudgetAdapter: Adapter to listen to any changes in budget made by the user and update the BudgetActivity layout accordingly in real time
+
+PlansActivity: Implementation of the Set Goals feature
+
+NewGoalActivity: Implementation of adding a new goal
+
+PlansAdapter: Adapter to listen to any changes and update PlansActivity layout accordingly in real time
+
+CashTransactionActivity: Implementation of manually adding transactions to expenses
+
+Data Class: implementation of the class to create a data object (category, budget, expense)
+
+Summary Class: implementation of the class to create a summary object (budget, summary, date)
+
+CategoryReport: implementation of the class to create a report object for HabitFragment
+
+BackgroundTasks: implementation of the class to fetch transaction from bank accounts and update the database in the background asynchronously
+
+UserProfile: implementation of the class to update user profile
+
+Util: implementation of the class that contains static helper functions used throughout the other classes in the application

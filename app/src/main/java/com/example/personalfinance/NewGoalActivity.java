@@ -72,7 +72,7 @@ public class NewGoalActivity extends AppCompatActivity {
 
         confirmBtn.setOnClickListener(v -> {
             Data a_Goal = GetNewGoal();
-            m_PlansRef.child(a_Goal.getGoal()).setValue(a_Goal).addOnCompleteListener(task -> {
+            m_PlansRef.child(a_Goal.GetGoal()).setValue(a_Goal).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     Log.d(TAG, "AddGoal: success");
                     Toast.makeText(getApplicationContext(),"New Goal added successfully", Toast.LENGTH_SHORT).show();
@@ -133,7 +133,7 @@ public class NewGoalActivity extends AppCompatActivity {
         // check if user has assigned goal to a particular category
         // if yes, include it in goal details
         if(!category.isEmpty()){
-            goal.setGoalCategory(category);
+            goal.SetGoalCategory(category);
         }
 
         return goal;

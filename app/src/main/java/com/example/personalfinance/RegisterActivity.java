@@ -33,13 +33,12 @@ public class RegisterActivity extends AppCompatActivity {
         RegisterActivity::onCreate() - Overrides the default onCreate function for RegisterActivity class
 
     * SYNOPSIS
-        void MainActivity::onCreate(Bundle savedInstanceState);
+        void RegisterActivity::onCreate(Bundle savedInstanceState);
         * savedInstanceState => previous state of the activity
 
     * DESCRIPTION
-        This function will be the first one to be called once the app is launched.
-        It will then attempt to call the login page, which is eventually what the user sees once the
-        app is launched.
+        This function will set the layout for the registration page. Then, it will prompt the user to
+        enter values and set onclick listeners for confirming those  values
 
     * AUTHOR
         Shreeti Shrestha
@@ -86,7 +85,6 @@ public class RegisterActivity extends AppCompatActivity {
         m_ProgressBar=findViewById(R.id.progress_log);
         m_Auth= FirebaseAuth.getInstance();
         m_Firestore=FirebaseFirestore.getInstance();
-//        m_Database=FirebaseDatabase.getInstance().getReference();
 
         m_SignUpBtn.setOnClickListener(v -> RegistrationButtonClicked());
 
@@ -248,6 +246,34 @@ public class RegisterActivity extends AppCompatActivity {
         return value;
     }
 
+    /**/
+    /*
+    * NAME
+        RegisterActivity::ValidateInputs() - Checks if user entered inputs are valid
+
+    * SYNOPSIS
+        private boolean ValidateInputs(String a_Email, String a_Password, String a_ConfirmPassword);
+        * a_Email: user entered email
+        * a_Password: user entered password
+        * a_ConfirmPassword: user entered password for confirmation
+
+    * RETURNS
+        Returns true if all entries are successfully validated, false otherwise.
+
+
+    * DESCRIPTION
+        This function will attempt to collect get the user entries and check if they're valid before
+        creating a new user with Firebase. The validation checks include:
+        * Checking if the email has an '@'
+        * Checking if the password has atleast 6 characters
+        * Checking if the password and password confirmation entries match each other
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        08:00pm, 02/02/2021
+    */
+    /**/
     private boolean ValidateInputs(String a_Email, String a_Password, String a_ConfirmPassword){
         if(!(a_Email.contains("@"))){
             m_NewUserEmail.setError("Invalid Email Address");

@@ -26,7 +26,7 @@ public class PlansActivity extends AppCompatActivity {
         PlansActivity::onCreate() - Overrides the default onCreate function for the class
 
     * SYNOPSIS
-        void HomeActivity::onCreate(Bundle savedInstanceState);
+        void PlansActivity::onCreate(Bundle savedInstanceState);
         * savedInstanceState => previous state of the activity
 
     * DESCRIPTION
@@ -63,17 +63,11 @@ public class PlansActivity extends AppCompatActivity {
         m_RecyclerView.setAdapter(m_Adapter);
 
         ExtendedFloatingActionButton m_AddNewGoal = findViewById(R.id.addGoalBtn);
-//        ExtendedFloatingActionButton m_AddSavings = findViewById(R.id.addSavingsBtn);
-//
-//        m_AddSavings.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(getApplicationContext(), SavingActivity.class));
-//            }
-//        });
+
         m_AddNewGoal.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),
                 NewGoalActivity.class)));
     }/* protected void onCreate(Bundle savedInstanceState) */
+
 
     // Constantly keep listening for any new changes once the activity is started
     @Override

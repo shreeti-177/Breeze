@@ -1,3 +1,7 @@
+//
+// Implementation of the CashTransactionActivity class
+// This class provides an interface to the user to manually add new transactions
+//
 package com.example.personalfinance;
 
 import android.os.Bundle;
@@ -27,6 +31,29 @@ import java.util.List;
 import java.util.Objects;
 
 public class CashTransactionActivity extends AppCompatActivity {
+
+    /**/
+    /*
+    * NAME
+        CashTransactionActivity::onCreate() - Overrides the default onCreate function for this class
+
+    * SYNOPSIS
+        void CashTransactionActivity::onCreate(Bundle savedInstanceState);
+        * savedInstanceState => previous state of the activity
+
+    * DESCRIPTION
+        This function will attempt to set the layout for the add transaction page.
+        Then, it set on click listeners for the cancel and confirm button.
+        Upon confirming to add a transaction, it calls the CreateTransactionObject() to validate user
+        entered values and create a Data object, and then finally adds the object to the Firebase database.
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        08:00am, 04/30/2021
+    */
+    /**/
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,12 +85,12 @@ public class CashTransactionActivity extends AppCompatActivity {
         confirmBtn.setOnClickListener(v -> {
             Data a_Category = null;
             try {
-                a_Category = AddNewTransaction();
+                a_Category = CreateTransactionObject();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
             assert a_Category != null;
-            Util.GetExpenseReference().child(a_Category.getId()).setValue(a_Category)
+            Util.GetExpenseReference().child(a_Category.GetId()).setValue(a_Category)
                     .addOnCompleteListener(task -> {
                         if(task.isSuccessful()){
                         Log.d(TAG, "AddTransaction: success");
@@ -80,9 +107,35 @@ public class CashTransactionActivity extends AppCompatActivity {
         });
 
         cancelBtn.setOnClickListener(v -> finish());
-    }
+    } /*  public void onCreate(@Nullable Bundle savedInstanceState)  */
 
-    private Data AddNewTransaction() throws ParseException {
+
+    /**/
+    /*
+    * NAME
+        CashTransactionActivity::CreateTransactionObject() - Creates a new data object to add to
+        the expense database
+
+    * SYNOPSIS
+        Data CashTransactionActivity::CreateTransactionObject();
+
+    * DESCRIPTION
+        This function attempts to check for any null entries in the transaction amount field. If so,
+        it prompts the user to enter a valid value. If not, it creates an instance of the Data class
+        for the user entered values and returns the object
+
+    * RETURNS
+        Returns a new Data Object
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        09:00pm, 04/30/2021
+    */
+    /**/
+
+    private Data CreateTransactionObject() throws ParseException {
         String categoryName = m_CategoryField.getText().toString().trim();
         Util.CheckForNullEntry(categoryName,m_CategoryField);
 
@@ -111,19 +164,43 @@ public class CashTransactionActivity extends AppCompatActivity {
         Days day = Days.daysBetween(epoch,dateTime);
 
         return new Data(expenseId, categoryName, merchant, Double.parseDouble(amount), date, month.getMonths(), day.getDays()+1, note);
-    }
+    }/* private Data CreateTransactionObject() */
+
+
+    /**/
+    /*
+    * NAME
+        CashTransactionActivity::GetExistingCategoryList() - Fetches all 10 categories as an Array adapter
+
+    * SYNOPSIS
+        ArrayAdapter<String> CashTransactionActivity::GetExistingCategoryList();
+
+    * DESCRIPTION
+        This function attempts to get a list of all the 10 categories. Then, it creates a new array adapter
+        with the list so that it can be used in the drop down menu when user is prompted to select a
+        category name for the transaction.
+
+    * RETURNS
+        Returns a new ArrayAdapter of strings
+
+    * AUTHOR
+        Shreeti Shrestha
+
+    * DATE
+        09:30pm, 04/30/2021
+    */
+    /**/
 
     private ArrayAdapter<String> GetExistingCategoryList(){
         List<String> items=Util.GetExistingCategories();
         return new ArrayAdapter<>(this, R.layout.list_item, R.id.category_items, items);
-    }
+    }/* private ArrayAdapter<String> GetExistingCategoryList() */
 
     private AutoCompleteTextView m_CategoryField;
     private EditText m_MerchantField;
     private EditText m_AmountField;
     private EditText m_DateField;
     private EditText m_NoteField;
-
     private MaterialDatePicker m_DatePicker;
     private final String TAG = "AddTransactionActivity";
 

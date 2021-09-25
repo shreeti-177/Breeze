@@ -38,6 +38,7 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
+    // default onCreate function with a previously saved instance
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,10 +173,10 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Data data = dataSnapshot.getValue(Data.class);
                     assert data != null;
-                    Double a_Amount = data.getAmount();
+                    Double a_Amount = data.GetAmount();
 
                     //Disclude data missing merchant name, date or amount
-                    if (data.getMerchant()==null||data.getDate()==null||a_Amount==null){
+                    if (data.GetMerchant()==null||data.GetDate()==null||a_Amount==null){
                         continue;
                     }
                     m_AllTransactions.add(data);
@@ -239,7 +240,7 @@ public class HomeFragment extends Fragment {
                     Summary a_Summary = dataSnapshot.getValue(Summary.class);
                     Log.i("Here","here");
                     assert a_Summary != null;
-                    Log.i("Summar expense",a_Summary.getExpense().toString());
+                    Log.i("Summary expense",a_Summary.getExpense().toString());
                     m_SummaryList.add(a_Summary);
                 }
 
